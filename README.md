@@ -1,6 +1,6 @@
-# jMe3GL2-examples
+# jMe3GL2-examples [ IN PROGRESS ]
 
-This is a repository hosting examples of 2D games that use the [jMe3GL2](https://github.com/JNightRide/jMe3GL2) library.
+This is a repository hosting examples of 2D games that use the [jMe3GL2](https://github.com/JNightRide/jMe3GL2) library (don't limit yourself with this library, you can integrate 2D games using other libraries).
 
 Some examples
 - dodge_the_creeps
