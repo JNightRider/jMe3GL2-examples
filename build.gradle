@@ -1,12 +1,57 @@
 allprojects {
-
+    project.ext {
+        // global dependencies
+        jmonkeyengineVersion = '3.6.1-stable'
+        dyn4jVersion = '5.0.1'
+    }
 
     repositories {
+        // to find libraries in the project's "lib" directory
+        flatDir {
+            dirs "${rootProject.projectDir}/lib"
+        }
+        maven { url "https://jitpack.io" }
         mavenCentral()
+        mavenLocal()
     }
 }
 
 subprojects {
+    apply plugin: 'application'
     apply plugin: 'java'
+    apply plugin: "de.undercouch.download" version "5.1.0"
+    apply plugin: 'idea'
+    apply plugin: "io.github.0ffz.github-packages" version "1.2.1" // Plugin for anonymous inclusion of artifacts hosted in github package registry
 
+    java {
+        sourceCompatibility = '17'
+        targetCompatibility = '17'
+    }
+
+    application {
+        if (System.getProperty("os.name").toLowerCase().contains("mac")) {
+            applicationDefaultJvmArgs = ['-XstartOnFirstThread'] // this is when using a Mac as a development machine which requires the AppKit main UI thread to be used for GUI applications
+        }
+    }
+
+    // cleanup tasks
+    clean.dependsOn('cleanDLLs', 'cleanDyLibs', 'cleanLogs', 'cleanSOs')
+    task cleanDLLs(type: Delete) {
+        delete fileTree(dir: '.', include: '*.dll')
+    }
+    task cleanDyLibs(type: Delete) {
+        delete fileTree(dir: '.', include: '*.dylib')
+    }
+    task cleanLogs(type: Delete) {
+        delete fileTree(dir: '.', include: 'hs_err_pid*.log')
+    }
+    task cleanSOs(type: Delete) {
+        delete fileTree(dir: '.', include: '*.so')
+    }
+
+    task fund(){
+        doLast {
+           java.awt.Desktop.desktop.browse "https://start.jmonkeyengine.org/#!funding=JME_DESKTOP,JME_EFFECTS,LEMUR,LOG4J2,8113%2F189b56af-a1be-4036-8ac7-2b62a94935ff".toURI()
+        }
+    }
 }
