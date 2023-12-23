@@ -72,7 +72,6 @@ public final class Dodgethecreeps extends SimpleApplication {
         setDisplayFps(false);
         setDisplayStatView(false);
         
-        
         // Initialize the globals access so that the default
         // components can find what they need.
         GuiGlobals.initialize(this);
