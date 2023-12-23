@@ -1,3 +1,4 @@
 rootProject.name = 'jMe3GL2-examples'
 
+include ('dodge_the_creeps')
 

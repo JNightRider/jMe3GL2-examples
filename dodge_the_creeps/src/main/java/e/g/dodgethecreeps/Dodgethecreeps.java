@@ -83,7 +83,7 @@ public final class Dodgethecreeps extends SimpleApplication {
         
         // The physical state is initialized.
         Dyn4jAppState<PhysicsBody2D> dyn4jAppState = new Dyn4jAppState<>(ThreadingType.PARALLEL);
-        dyn4jAppState.setDebug(true);
+        dyn4jAppState.setDebug(false);
         stateManager.attach(dyn4jAppState);
         
         // Set the camera to 2D, with a distance of 5 units.

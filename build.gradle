@@ -19,9 +19,7 @@ allprojects {
 subprojects {
     apply plugin: 'application'
     apply plugin: 'java'
-    apply plugin: "de.undercouch.download" version "5.1.0"
     apply plugin: 'idea'
-    apply plugin: "io.github.0ffz.github-packages" version "1.2.1" // Plugin for anonymous inclusion of artifacts hosted in github package registry
 
     java {
         sourceCompatibility = '17'
@@ -32,6 +30,35 @@ subprojects {
         if (System.getProperty("os.name").toLowerCase().contains("mac")) {
             applicationDefaultJvmArgs = ['-XstartOnFirstThread'] // this is when using a Mac as a development machine which requires the AppKit main UI thread to be used for GUI applications
         }
+    }
+
+    dependencies {
+        // You can read more about how to add dependencies here:
+        //   https://docs.gradle.org/current/userguide/dependency_management.html#sec:how_to_declare_your_dependencies
+
+        implementation 'org.jmonkeyengine:jme3-core:' + jmonkeyengineVersion
+        implementation 'org.jmonkeyengine:jme3-desktop:' + jmonkeyengineVersion
+        runtimeOnly 'org.jmonkeyengine:jme3-jogg:' + jmonkeyengineVersion
+        runtimeOnly 'org.jmonkeyengine:jme3-plugins:' + jmonkeyengineVersion
+
+        implementation 'org.jmonkeyengine:jme3-effects:' + jmonkeyengineVersion
+        runtimeOnly 'org.jmonkeyengine:jme3-lwjgl3:' + jmonkeyengineVersion
+
+        implementation 'org.dyn4j:dyn4j:' + dyn4jVersion
+
+        implementation 'com.simsilica:lemur:1.16.0'
+        implementation 'com.simsilica:lemur-proto:1.13.0'
+        runtimeOnly 'org.codehaus.groovy:groovy-jsr223:3.0.10'
+
+        implementation 'org.apache.logging.log4j:log4j-core:2.22.0'
+        implementation 'org.apache.logging.log4j:log4j-api:2.22.0'
+
+        implementation 'com.epagagames:particlemonkey:1.1.0'
+
+        // local
+        implementation name: 'jMe3GL2-awt-2.5-SNAPSHOT'
+        implementation name: 'jMe3GL2-core-2.5-SNAPSHOT'
+        implementation name: 'jMe3HUDL-1.0-SNAPSHOT'
     }
 
     // cleanup tasks
