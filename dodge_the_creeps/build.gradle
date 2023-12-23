@@ -1,0 +1,8 @@
+group = 'e.g.dodgethecreeps'
+version = '1.0.5'
+
+mainClassName = 'e.g.dodgethecreeps.Dodgethecreeps'
+if (!hasProperty('mainClass')) {
+    ext.mainClass = mainClassName
+}
+jar.manifest.attributes('Main-Class': mainClassName)
