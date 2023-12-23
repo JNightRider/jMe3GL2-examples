@@ -156,7 +156,7 @@ public final class GameSceneAppState extends AbstractScreen {
      * Timer task that spawns {@link e.g.dodgethecreeps.game.Mob} (enemies)
      */
     private final TimerTask _on_MobTimer_timeout = () -> {
-        Mob mob = Mob.getNewInstanceMod((Dodgethecreeps) getApplication());
+        Mob mob = Mob.getNewInstanceMob((Dodgethecreeps) getApplication());
         
         Vector2 position = mobSpawnLocation.getRandomPath();
         

@@ -163,7 +163,7 @@ public final class Mob extends RigidBody2D {
      * @param app application
      * @return Mob
      */
-    public static Mob getNewInstanceMod(Dodgethecreeps app) {
+    public static Mob getNewInstanceMob(Dodgethecreeps app) {
         AssetManager assetManager = app.getAssetManager();
         Material mat = MaterialUtilities.getUnshadedMaterialFromClassPath(assetManager, "Textures/enemyFlyingAlt_1.png");
         mat.setFloat("AlphaDiscardThreshold", 0.0F);
