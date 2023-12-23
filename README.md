@@ -10,7 +10,7 @@ Some examples
 If you already have knowledge about **jMe3GL2** and don't know where to start.
 
 You can start with this first tutorial where you can create your first 2D game based on the Godot (2D) demo.
-[Go to tutorial]()
+[Go to tutorial](https://github.com/JNightRide/jMe3GL2-examples/wiki)
 
 With this you will have an idea of ​​how to start with **JME3** and **jMe3GL2**, 2D games with this engine have no limits; It all depends on your imagination.
 
