@@ -32,6 +32,7 @@ import jme3gl2.util.TimerAppState;
 import jme3gl2.util.TimerTask;
 
 import org.dyn4j.geometry.Vector2;
+import org.dyn4j.world.World;
 
 /**
  * A state for the game logic.
@@ -255,9 +256,12 @@ public final class GameSceneAppState extends AbstractScreen {
     @Override
     protected void onDisable() {
         super.onDisable();        
-        dyn4jAppState.getPhysicsSpace().removeAll(false);
-        rootNode.detachAllChildren();
+        World<PhysicsBody2D> world = dyn4jAppState.getPhysicsSpace().getPhysicsWorld();
+        if (world != null) {
+            world.removeAllBodies();
+        }
         
+        rootNode.detachAllChildren();        
         getState(MainSceneAppState.class).setEnabled(true);
     }    
 }
