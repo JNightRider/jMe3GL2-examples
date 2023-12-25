@@ -22,7 +22,6 @@ import jme3gl2.physics.ThreadingType;
 import jme3gl2.physics.control.PhysicsBody2D;
 import jme3gl2.renderer.Camera2DRenderer;
 import jme3gl2.util.TimerAppState;
-import jme3gl2.util.input.InputHandlerAppState;
 
 /**
  * Main class for the game <b>Dodge The Creeps</b>.
@@ -93,9 +92,6 @@ public final class Dodgethecreeps extends SimpleApplication {
         // auxiliary states
         TimerAppState timerAppState = new TimerAppState();
         stateManager.attach(timerAppState);
-        
-        InputHandlerAppState handlerAppState = new InputHandlerAppState();
-        stateManager.attach(handlerAppState);
         
         // scene states; where the game is managed
         MainSceneAppState sceneAppState = new MainSceneAppState();
