@@ -105,9 +105,11 @@ public final class Mob extends RigidBody2D {
     }
     
     /**
-     * Add an AC to this body; The map of physical bodies records them.
+     * Add an {@code org.dyn4j.dynamics.BodyFixture} to this body; The map of 
+     * physical bodies records them.
+     * 
      * @param key key index
-     * @param bf physical form
+     * @param bf physical shape
      */
     private void addMapBodyFixture(int key, BodyFixture bf) {
         List<BodyFixture> bfs = this.bodyFixtures.get(key);
@@ -120,9 +122,9 @@ public final class Mob extends RigidBody2D {
     }
     
     /**
-     * Sets the status of a previously registered physical form.
+     * Sets the status of a previously registered physical shape.
      * @param key key index
-     * @param sensor <code>true</code> to disable physical form; otherwise
+     * @param sensor <code>true</code> to disable physical shape; otherwise
      * <code>false</code>.
      */
     private void setMapBodyFixture(int key, boolean sensor) {
