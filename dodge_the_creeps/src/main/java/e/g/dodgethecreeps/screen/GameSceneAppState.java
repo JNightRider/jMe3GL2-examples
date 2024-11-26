@@ -25,14 +25,14 @@ import e.g.jme3hudl.ControlLayout;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-import jme3gl2.physics.Dyn4jAppState;
-import jme3gl2.physics.control.PhysicsBody2D;
-import jme3gl2.util.Timer;
-import jme3gl2.util.TimerAppState;
-import jme3gl2.util.TimerTask;
-
 import org.dyn4j.geometry.Vector2;
 import org.dyn4j.world.World;
+
+import org.je3gl.physics.Dyn4jAppState;
+import org.je3gl.physics.control.PhysicsBody2D;
+import org.je3gl.util.Timer;
+import org.je3gl.util.TimerAppState;
+import org.je3gl.util.TimerTask;
 
 /**
  * A state for the game logic.
@@ -156,7 +156,7 @@ public final class GameSceneAppState extends AbstractScreen {
     /**
      * Timer task that spawns {@link e.g.dodgethecreeps.game.Mob} (enemies)
      */
-    private final TimerTask _on_MobTimer_timeout = () -> {
+    private final TimerTask _on_MobTimer_timeout = (Timer timer) -> {
         Mob mob = Mob.getNewInstanceMob((Dodgethecreeps) getApplication());
         
         Vector2 position = mobSpawnLocation.getRandomPath();
@@ -179,7 +179,7 @@ public final class GameSceneAppState extends AbstractScreen {
     /**
      * Timer task that increases the player's score.
      */
-    private final TimerTask _on_ScoreTimer_timeout = () -> {
+    private final TimerTask _on_ScoreTimer_timeout = (Timer timer) -> {
         score += 1;
         scoreLabel.setText(String.valueOf(score));
         scoreTimer.reset();
@@ -190,7 +190,7 @@ public final class GameSceneAppState extends AbstractScreen {
      * and <code>scoreTimer</code>; Responsible for managing enemy spawn time
      * and player score.
      */
-    private final TimerTask _on_StartTimer_timeou = () -> {
+    private final TimerTask _on_StartTimer_timeou = (Timer timer) -> {
         player.setEnabled(true);
         message.setText("");
         
@@ -203,7 +203,7 @@ public final class GameSceneAppState extends AbstractScreen {
     /**
      * Timer task indicating "game over";
      */
-    private final TimerTask _on_MessageTimer_timeout = () -> {
+    private final TimerTask _on_MessageTimer_timeout = (Timer timer) -> {
         setEnabled(false);
         messageTimer.stop();
     };
@@ -256,7 +256,7 @@ public final class GameSceneAppState extends AbstractScreen {
     @Override
     protected void onDisable() {
         super.onDisable();        
-        World<PhysicsBody2D> world = dyn4jAppState.getPhysicsSpace().getPhysicsWorld();
+        World<PhysicsBody2D> world = dyn4jAppState.getPhysicsSpace();
         if (world != null) {
             world.removeAllBodies();
         }

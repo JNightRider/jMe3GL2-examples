@@ -20,15 +20,6 @@ import e.g.dodgethecreeps.screen.GameSceneAppState;
 
 import java.util.List;
 
-import jme3gl2.physics.PhysicsSpace;
-import jme3gl2.physics.control.KinematicBody2D;
-import jme3gl2.physics.control.PhysicsBody2D;
-import jme3gl2.scene.control.AnimatedSprite;
-import jme3gl2.scene.shape.Sprite;
-import jme3gl2.utilities.GeometryUtilities;
-import jme3gl2.utilities.MaterialUtilities;
-import jme3gl2.utilities.TextureUtilities;
-
 import org.dyn4j.dynamics.BodyFixture;
 import org.dyn4j.dynamics.TimeStep;
 import org.dyn4j.dynamics.contact.ContactConstraint;
@@ -38,6 +29,15 @@ import org.dyn4j.geometry.Vector2;
 import org.dyn4j.world.PhysicsWorld;
 import org.dyn4j.world.listener.StepListener;
 import org.dyn4j.world.listener.StepListenerAdapter;
+
+import org.je3gl.physics.PhysicsSpace;
+import org.je3gl.physics.control.KinematicBody2D;
+import org.je3gl.physics.control.PhysicsBody2D;
+import org.je3gl.scene.control.AnimatedSprite2D;
+import org.je3gl.scene.shape.Sprite;
+import static org.je3gl.utilities.GeometryUtilities.*;
+import static org.je3gl.utilities.MaterialUtilities.*;
+import static org.je3gl.utilities.TextureUtilities.*;
 
 /**
  * Class <code>Player</code> that manages the player character.
@@ -152,7 +152,9 @@ public final class Player extends KinematicBody2D {
     @Override
     public void setPhysicsSpace(PhysicsSpace<PhysicsBody2D> physicsSpace) {
         super.setPhysicsSpace(physicsSpace);
-        physicsSpace.getPhysicsWorld().addStepListener(_on_Step_Listener);
+        if (physicsSpace != null) {
+            physicsSpace.addStepListener(_on_Step_Listener);
+        }
     }
 
     /**
@@ -178,9 +180,9 @@ public final class Player extends KinematicBody2D {
         
         if (velocity.getMagnitude() > 0) {
             velocity = velocity.getNormalized().multiply(speed);
-            spatial.getControl(AnimatedSprite.class).setEnabled(true);
+            spatial.getControl(AnimatedSprite2D.class).setEnabled(true);
         } else {
-            spatial.getControl(AnimatedSprite.class).setEnabled(false);
+            spatial.getControl(AnimatedSprite2D.class).setEnabled(false);
         }
         
         Vector2 position = getTransform().getTranslation();
@@ -194,12 +196,12 @@ public final class Player extends KinematicBody2D {
         
         Sprite sprite = (Sprite) ((Geometry) spatial).getMesh();
         if ( velocity.x != 0 ) {
-            spatial.getControl(AnimatedSprite.class).playAnimation("walk", 0.15f);            
+            spatial.getControl(AnimatedSprite2D.class).playAnimation("walk", 0.15f);            
             sprite.flipV(false);
             
             sprite.flipH(velocity.x < 0);
         } else if ( velocity.y != 0 ) {
-            spatial.getControl(AnimatedSprite.class).playAnimation("up", 0.15f);
+            spatial.getControl(AnimatedSprite2D.class).playAnimation("up", 0.15f);
             sprite.flipV(velocity.y < 0);
         }
     }
@@ -207,10 +209,11 @@ public final class Player extends KinematicBody2D {
     /**
      * Release all the resources that this physical body uses.
      */
-    private void queueFree() {
+    @Override
+    public void queueFree() {
         if (spatial.removeFromParent()) {
-            physicsSpace.getPhysicsWorld().removeStepListener(_on_Step_Listener);
-            physicsSpace.getPhysicsWorld().removeBody(this);
+            physicsSpace.removeStepListener(_on_Step_Listener);
+            physicsSpace.removeBody(this);
             
             InputManager inputManager = app.getInputManager();
             if (inputManager.hasMapping(MOVE_DOWN)) {
@@ -232,29 +235,29 @@ public final class Player extends KinematicBody2D {
     public static Player getNewInstancePlayer(Dodgethecreeps app) {
         AssetManager assetManager = app.getAssetManager();
         
-        Material mat = MaterialUtilities.getUnshadedMaterialFromClassPath(assetManager, "Textures/playerGrey_walk1.png");
+        Material mat = getUnshadedMaterialFromClassPath(assetManager, "Textures/playerGrey_walk1.png");
         mat.setFloat("AlphaDiscardThreshold", 0.0F);
         
         Sprite sprite = new Sprite(1.5F, 1.5F);        
         Geometry geom = new Geometry("Player", sprite);
         
         // Add the following animations.
-        AnimatedSprite animatedSprite = new AnimatedSprite();
+        AnimatedSprite2D animatedSprite = new AnimatedSprite2D();
         animatedSprite.addAnimation("walk", new Texture[] {
-            TextureUtilities.getTextureFromClassPath(assetManager, "Textures/playerGrey_walk1.png"),
-            TextureUtilities.getTextureFromClassPath(assetManager, "Textures/playerGrey_walk2.png")
+            getTextureFromClassPath(assetManager, "Textures/playerGrey_walk1.png"),
+            getTextureFromClassPath(assetManager, "Textures/playerGrey_walk2.png")
         });
         animatedSprite.addAnimation("up", new Texture[] {
-            TextureUtilities.getTextureFromClassPath(assetManager, "Textures/playerGrey_up1.png"),
-            TextureUtilities.getTextureFromClassPath(assetManager, "Textures/playerGrey_up2.png")
+            getTextureFromClassPath(assetManager, "Textures/playerGrey_up1.png"),
+            getTextureFromClassPath(assetManager, "Textures/playerGrey_up2.png")
         });
         
-        animatedSprite.setSpeed(0.60F);
+        animatedSprite.setAnimationSpeed(0.60F);
         
         geom.setMaterial(mat);
         geom.setQueueBucket(RenderQueue.Bucket.Transparent);
         
-        BodyFixture fixture = new BodyFixture(GeometryUtilities.createCapsule(0.8, 1.1));
+        BodyFixture fixture = new BodyFixture(dyn4jCreateCapsule(0.8, 1.1));
         fixture.setFilter(new LayerFilter(0));
         
         Player player = new Player(app);

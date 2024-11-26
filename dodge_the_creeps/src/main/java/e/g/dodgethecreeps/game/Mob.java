@@ -9,6 +9,7 @@ import com.jme3.material.Material;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
+import com.jme3.scene.Spatial;
 import com.jme3.texture.Texture;
 import com.jme3.util.IntMap;
 
@@ -17,17 +18,20 @@ import e.g.dodgethecreeps.Dodgethecreeps;
 import java.util.ArrayList;
 import java.util.List;
 
-import jme3gl2.physics.control.RigidBody2D;
-import jme3gl2.scene.control.AnimatedSprite;
-import jme3gl2.scene.shape.Sprite;
-import jme3gl2.utilities.GeometryUtilities;
-import jme3gl2.utilities.MaterialUtilities;
-import jme3gl2.utilities.TextureUtilities;
-
 import org.dyn4j.dynamics.BodyFixture;
 import org.dyn4j.geometry.Capsule;
 import org.dyn4j.geometry.MassType;
 import org.dyn4j.geometry.Vector2;
+
+import org.je3gl.listener.AnimationChangeListener;
+import org.je3gl.listener.AnimationEvent;
+import org.je3gl.physics.control.RigidBody2D;
+import org.je3gl.scene.control.AnimatedSprite2D;
+import org.je3gl.scene.control.SpriteAnimation2D;
+import org.je3gl.scene.shape.Sprite;
+import static org.je3gl.utilities.GeometryUtilities.*;
+import static org.je3gl.utilities.MaterialUtilities.*;
+import static org.je3gl.utilities.TextureUtilities.*;
 
 /**
  * Class <code>Mob</code> that manages enemies.
@@ -60,7 +64,7 @@ public final class Mob extends RigidBody2D {
      */
     @Override
     protected void ready() {
-        String[] names = spatial.getControl(AnimatedSprite.class).getAnimations().toArray(new String[3]);
+        String[] names = spatial.getControl(AnimatedSprite2D.class).getAnimations().toArray(new String[3]);
         int rand = (int) (Math.random() * names.length);
         if (rand >= names.length) {
             rand = names.length - 1;
@@ -69,19 +73,19 @@ public final class Mob extends RigidBody2D {
         BodyFixture bf_def;
         if ("fly".equals(names[rand])) {
             //------------------------------------------------------------------
-            bf_def = new BodyFixture(GeometryUtilities.createCircle(0.5));
+            bf_def = new BodyFixture(dyn4jCreateCircle(0.5));
             bf_def.setFilter(new LayerFilter(1));
             addMapBodyFixture(0, bf_def);
             //------------------------------------------------------------------
             
             
             //------------------------------------------------------------------
-            bf_def = new BodyFixture(GeometryUtilities.createCircle(0.3));
+            bf_def = new BodyFixture(dyn4jCreateCircle(0.3));
             bf_def.setFilter(new LayerFilter(1));
             bf_def.setSensor(true);
             addMapBodyFixture(1, bf_def);
             
-            Capsule capsule = GeometryUtilities.createCapsule(0.1, 1.5);
+            Capsule capsule = dyn4jCreateCapsule(0.1, 1.5);
             capsule.translate(-0.2, 0);
             
             bf_def = new BodyFixture(capsule);
@@ -90,18 +94,25 @@ public final class Mob extends RigidBody2D {
             addMapBodyFixture(1, bf_def);
             //------------------------------------------------------------------
             
-            spatial.getControl(AnimatedSprite.class).addSpriteAnimationChangeListener((body, index) -> {
-                setMapBodyFixture(oldIndex, true);
-                setMapBodyFixture(index, false);
-                oldIndex = index;
+            spatial.getControl(AnimatedSprite2D.class).addAnimationChangeListener(new AnimationChangeListener<Spatial, SpriteAnimation2D, AnimatedSprite2D>() {
+                @Override
+                public void beforeAnimation2DChange(AnimationEvent<Spatial, SpriteAnimation2D, AnimatedSprite2D> event) { 
+                    // nothing
+                }
+                @Override
+                public void afterAnimation2DChange(AnimationEvent<Spatial, SpriteAnimation2D, AnimatedSprite2D> event) {
+                    setMapBodyFixture(oldIndex, true);
+                    setMapBodyFixture(event.getFrame(), false);
+                    oldIndex = event.getFrame();
+                }
             });
         } else {
-            bf_def = new BodyFixture(GeometryUtilities.createCapsule(1, 0.8));
+            bf_def = new BodyFixture(dyn4jCreateCapsule(1, 0.8));
             bf_def.setFilter(new LayerFilter(1));
             addMapBodyFixture(0, bf_def);
         }
         
-        spatial.getControl(AnimatedSprite.class).playAnimation(names[oldIndex = rand], 0.15F);
+        spatial.getControl(AnimatedSprite2D.class).playAnimation(names[oldIndex = rand], 0.15F);
     }
     
     /**
@@ -167,27 +178,27 @@ public final class Mob extends RigidBody2D {
      */
     public static Mob getNewInstanceMob(Dodgethecreeps app) {
         AssetManager assetManager = app.getAssetManager();
-        Material mat = MaterialUtilities.getUnshadedMaterialFromClassPath(assetManager, "Textures/enemyFlyingAlt_1.png");
+        Material mat = getUnshadedMaterialFromClassPath(assetManager, "Textures/enemyFlyingAlt_1.png");
         mat.setFloat("AlphaDiscardThreshold", 0.0F);
         
         Sprite sprite = new Sprite(1.5F, 1.5F);
         Geometry geom = new Geometry("Mob", sprite);
         
         // Add the following animations.
-        AnimatedSprite as = new AnimatedSprite();
+        AnimatedSprite2D as = new AnimatedSprite2D();
         as.addAnimation("fly", new Texture[] {
-            TextureUtilities.getTextureFromClassPath(assetManager, "Textures/enemyFlyingAlt_1.png"),
-            TextureUtilities.getTextureFromClassPath(assetManager, "Textures/enemyFlyingAlt_2.png")
+            getTextureFromClassPath(assetManager, "Textures/enemyFlyingAlt_1.png"),
+            getTextureFromClassPath(assetManager, "Textures/enemyFlyingAlt_2.png")
         });
         as.addAnimation("swim", new Texture[] {
-            TextureUtilities.getTextureFromClassPath(assetManager, "Textures/enemySwimming_1.png"),
-            TextureUtilities.getTextureFromClassPath(assetManager, "Textures/enemySwimming_2.png")
+            getTextureFromClassPath(assetManager, "Textures/enemySwimming_1.png"),
+            getTextureFromClassPath(assetManager, "Textures/enemySwimming_2.png")
         });
         as.addAnimation("walk", new Texture[] {
-            TextureUtilities.getTextureFromClassPath(assetManager, "Textures/enemyWalking_1.png"),
-            TextureUtilities.getTextureFromClassPath(assetManager, "Textures/enemyWalking_2.png")
+            getTextureFromClassPath(assetManager, "Textures/enemyWalking_1.png"),
+            getTextureFromClassPath(assetManager, "Textures/enemyWalking_2.png")
         });        
-        as.setSpeed(0.60F);
+        as.setAnimationSpeed(0.60F);
         
         geom.setMaterial(mat);
         geom.setQueueBucket(RenderQueue.Bucket.Transparent);

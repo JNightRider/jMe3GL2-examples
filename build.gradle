@@ -1,8 +1,8 @@
 allprojects {
     project.ext {
         // global dependencies
-        jmonkeyengineVersion = '3.6.1-stable'
-        dyn4jVersion = '5.0.1'
+        jmonkeyengineVersion = '3.7.0-stable'
+        dyn4jVersion = '5.0.2'
     }
 
     repositories {
@@ -56,8 +56,9 @@ subprojects {
         implementation 'com.epagagames:particlemonkey:1.1.0'
 
         // local
-        implementation name: 'jMe3GL2-awt-2.5-SNAPSHOT'
-        implementation name: 'jMe3GL2-core-2.5-SNAPSHOT'
+        implementation name: 'jMe3GL2-core-3.0.0'
+        implementation name: 'jMe3GL2-jawt-3.0.0'
+        implementation name: 'jMe3GL2-plugins-3.0.0'
         implementation name: 'jMe3HUDL-1.0-SNAPSHOT'
     }
 

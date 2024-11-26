@@ -17,11 +17,11 @@ import java.awt.Image;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 
-import jme3gl2.physics.Dyn4jAppState;
-import jme3gl2.physics.ThreadingType;
-import jme3gl2.physics.control.PhysicsBody2D;
-import jme3gl2.renderer.Camera2DRenderer;
-import jme3gl2.util.TimerAppState;
+import org.je3gl.physics.Dyn4jAppState;
+import org.je3gl.physics.ThreadingType;
+import org.je3gl.physics.control.PhysicsBody2D;
+import org.je3gl.renderer.Camera2DRenderer;
+import org.je3gl.util.TimerAppState;
 
 /**
  * Main class for the game <b>Dodge The Creeps</b>.
@@ -81,12 +81,11 @@ public final class Dodgethecreeps extends SimpleApplication {
         
         // The physical state is initialized.
         Dyn4jAppState<PhysicsBody2D> dyn4jAppState = new Dyn4jAppState<>(ThreadingType.PARALLEL);
-        dyn4jAppState.setDebug(false);
+        dyn4jAppState.setDebugEnabled(false);
         stateManager.attach(dyn4jAppState);
         
         // Set the camera to 2D, with a distance of 5 units.
-        Camera2DRenderer camera2DRenderer = new Camera2DRenderer(Camera2DRenderer.GLRendererType.GL_2D, 5.0F, 0.01F);
-        camera2DRenderer.getJme3GL2Camera().setProperty("InterpolationByTPF", false);
+        Camera2DRenderer camera2DRenderer = new Camera2DRenderer(Camera2DRenderer.GLRendererType.GLX_25D, 5.0F, 0.01F);
         stateManager.attach(camera2DRenderer);
         
         // auxiliary states
