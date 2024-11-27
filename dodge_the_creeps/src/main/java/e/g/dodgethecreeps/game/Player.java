@@ -29,6 +29,7 @@ import org.dyn4j.geometry.Vector2;
 import org.dyn4j.world.PhysicsWorld;
 import org.dyn4j.world.listener.StepListener;
 import org.dyn4j.world.listener.StepListenerAdapter;
+import org.je3gl.listener.SpaceListener;
 
 import org.je3gl.physics.PhysicsSpace;
 import org.je3gl.physics.control.KinematicBody2D;
@@ -129,6 +130,21 @@ public final class Player extends KinematicBody2D {
     };
     
     /**
+     * Listener of physical space.
+     */
+    private final SpaceListener<PhysicsBody2D> _on_Space_Listener = new SpaceListener<PhysicsBody2D>() {
+        @Override
+        public void spaceAttached(PhysicsSpace<PhysicsBody2D> physicsSpace) {
+            physicsSpace.addStepListener(_on_Step_Listener);
+        }
+        
+        @Override
+        public void spaceDetached(PhysicsSpace<PhysicsBody2D> physicsSpace) {
+            physicsSpace.removeStepListener(_on_Step_Listener);
+        }
+    };
+    
+    /**
      * (non-Javadoc)
      * @see jme3gl2.physics.control.PhysicsBody2D#ready() 
      */
@@ -142,19 +158,7 @@ public final class Player extends KinematicBody2D {
         inputManager.addListener(_on_Action_Listener, new String[] {
             Player.MOVE_DOWN, Player.MOVE_LEFT, Player.MOVE_RIGHT, Player.MOVE_UP
         });
-    }
-
-    /**
-     * (non-JavaDoc)
-     * @see jme3gl2.physics.control.PhysicsBody2D#setPhysicsSpace(jme3gl2.physics.PhysicsSpace) 
-     * @param physicsSpace PhysicsSpace
-     */
-    @Override
-    public void setPhysicsSpace(PhysicsSpace<PhysicsBody2D> physicsSpace) {
-        super.setPhysicsSpace(physicsSpace);
-        if (physicsSpace != null) {
-            physicsSpace.addStepListener(_on_Step_Listener);
-        }
+        addSpaceListener(_on_Space_Listener);
     }
 
     /**
