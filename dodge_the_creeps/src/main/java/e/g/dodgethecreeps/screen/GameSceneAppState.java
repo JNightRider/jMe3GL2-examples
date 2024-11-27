@@ -135,7 +135,7 @@ public final class GameSceneAppState extends AbstractScreen {
         
         mobTimer     = timerAppState.attachTimer("MobTimer",     new Timer(0.5F).attachTask(_on_MobTimer_timeout), 0.60F);
         scoreTimer   = timerAppState.attachTimer("ScoreTimer",   new Timer(0.75F).attachTask(_on_ScoreTimer_timeout), 0.60F);
-        startTimer   = timerAppState.attachTimer("StartTimer",   new Timer(1.05F).attachTask(_on_StartTimer_timeou), 0.60F);
+        startTimer   = timerAppState.attachTimer("StartTimer",   new Timer(1.05F).attachTask(_on_StartTimer_timeout), 0.60F);
         messageTimer = timerAppState.attachTimer("MessageTimer", new Timer(1.0F).attachTask(_on_MessageTimer_timeout), 0.60F);
         
         Camera cam = application.getCamera();
@@ -190,7 +190,7 @@ public final class GameSceneAppState extends AbstractScreen {
      * and <code>scoreTimer</code>; Responsible for managing enemy spawn time
      * and player score.
      */
-    private final TimerTask _on_StartTimer_timeou = (Timer timer) -> {
+    private final TimerTask _on_StartTimer_timeout = (Timer timer) -> {
         player.setEnabled(true);
         message.setText("");
         
