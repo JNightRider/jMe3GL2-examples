@@ -39,8 +39,8 @@ public final class LayerFilter implements Filter {
      */
     @Override
     public boolean isAllowed(Filter filter) {
-        if (filter instanceof LayerFilter) {
-            if (this.layer == ((LayerFilter) filter).layer) {
+        if (filter instanceof LayerFilter layerFilter) {
+            if (this.layer == layerFilter.layer) {
                 return false;
             }
         }
