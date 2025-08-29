@@ -29,8 +29,7 @@ public abstract class AbstractScreen extends BaseAppState {
     
     /** UI root container. */
     protected Container rootContainer;
-    
-    
+
     /** Label for messages. */
     protected Label message;
     
@@ -61,6 +60,7 @@ public abstract class AbstractScreen extends BaseAppState {
     
     /** 
      * (non-JavaDoc) 
+     * @param app the application
      * @see  com.jme3.app.state.BaseAppState#cleanup() 
      */
     @Override protected void cleanup(Application app) { }

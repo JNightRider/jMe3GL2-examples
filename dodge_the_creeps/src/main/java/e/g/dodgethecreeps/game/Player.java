@@ -29,8 +29,8 @@ import org.dyn4j.geometry.Vector2;
 import org.dyn4j.world.PhysicsWorld;
 import org.dyn4j.world.listener.StepListener;
 import org.dyn4j.world.listener.StepListenerAdapter;
-import org.je3gl.listener.SpaceListener;
 
+import org.je3gl.listener.SpaceListener;
 import org.je3gl.physics.PhysicsSpace;
 import org.je3gl.physics.control.KinematicBody2D;
 import org.je3gl.physics.control.PhysicsBody2D;
