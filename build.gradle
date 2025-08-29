@@ -1,16 +1,10 @@
 allprojects {
-    project.ext {
-        // global dependencies
-        jmonkeyengineVersion = '3.7.0-stable'
-        dyn4jVersion = '5.0.2'
-    }
-
     repositories {
         // to find libraries in the project's "lib" directory
         flatDir {
             dirs "${rootProject.projectDir}/lib"
         }
-        maven { url "https://jitpack.io" }
+        maven { url = uri("https://jitpack.io") }
         mavenCentral()
         mavenLocal()
     }
@@ -36,24 +30,23 @@ subprojects {
         // You can read more about how to add dependencies here:
         //   https://docs.gradle.org/current/userguide/dependency_management.html#sec:how_to_declare_your_dependencies
 
-        implementation 'org.jmonkeyengine:jme3-core:' + jmonkeyengineVersion
-        implementation 'org.jmonkeyengine:jme3-desktop:' + jmonkeyengineVersion
-        runtimeOnly 'org.jmonkeyengine:jme3-jogg:' + jmonkeyengineVersion
-        runtimeOnly 'org.jmonkeyengine:jme3-plugins:' + jmonkeyengineVersion
+        implementation(libs.jme3.core)
+        implementation(libs.jme3.desktop)
+        runtimeOnly(libs.jme3.jogg)
+        runtimeOnly(libs.jme3.plugins)
 
-        implementation 'org.jmonkeyengine:jme3-effects:' + jmonkeyengineVersion
-        runtimeOnly 'org.jmonkeyengine:jme3-lwjgl3:' + jmonkeyengineVersion
+        implementation(libs.jme3.effects)
+        runtimeOnly(libs.jme3.lwjgl3)
 
-        implementation 'org.dyn4j:dyn4j:' + dyn4jVersion
+        implementation(libs.dyn4j)
 
-        implementation 'com.simsilica:lemur:1.16.0'
-        implementation 'com.simsilica:lemur-proto:1.13.0'
-        runtimeOnly 'org.codehaus.groovy:groovy-jsr223:3.0.10'
+        implementation(libs.lemur)
+        implementation(libs.lemur.proto)
+        runtimeOnly(libs.groovy.jsr223)
 
-        implementation 'org.apache.logging.log4j:log4j-core:2.22.0'
-        implementation 'org.apache.logging.log4j:log4j-api:2.22.0'
+        implementation(libs.bundles.log4j)
 
-        implementation 'com.epagagames:particlemonkey:1.1.0'
+        implementation(libs.particlemonkey)
 
         // local
         implementation name: 'jMe3GL2-core-3.0.0'

@@ -1,0 +1,36 @@
+## Catalog of libraries and plugins used to build and run the jMe3GL2 project
+
+[versions]
+
+particlemonkeyVersion = "1.1.0"
+jmonkeyengineVersion  = "3.8.1-stable"
+dyn4jVersion          = "5.0.2"
+lemurVersion          = "1.16.0"
+lemurprotoVersion     = "1.13.0"
+groovyVersion         = "3.0.10"
+log4jVersion          = "2.22.0"
+
+[libraries]
+
+dyn4j           = { module = "org.dyn4j:dyn4j",                   version.ref = "dyn4jVersion"          }
+lemur           = { module = "com.simsilica:lemur",               version.ref = "lemurVersion"          }
+lemur-proto     = { module = "com.simsilica:lemur-proto",         version.ref = "lemurprotoVersion"     }
+groovy-jsr223   = { module = "org.codehaus.groovy:groovy-jsr223", version.ref = "groovyVersion"         }
+particlemonkey  = { module = "com.epagagames:particlemonkey",     version.ref = "particlemonkeyVersion" }
+
+jme3-core      = { module = "org.jmonkeyengine:jme3-core",    version.ref = "jmonkeyengineVersion" }
+jme3-desktop   = { module = "org.jmonkeyengine:jme3-desktop", version.ref = "jmonkeyengineVersion" }
+jme3-lwjgl3    = { module = "org.jmonkeyengine:jme3-lwjgl3",  version.ref = "jmonkeyengineVersion" }
+jme3-plugins   = { module = "org.jmonkeyengine:jme3-plugins", version.ref = "jmonkeyengineVersion" }
+jme3-jogg      = { module = "org.jmonkeyengine:jme3-jogg",    version.ref = "jmonkeyengineVersion" }
+jme3-effects   = { module = "org.jmonkeyengine:jme3-effects", version.ref = "jmonkeyengineVersion" }
+
+log4j-core      = { module = "org.apache.logging.log4j:log4j-core", version.ref = "log4jVersion" }
+log4j-api       = { module = "org.apache.logging.log4j:log4j-api",  version.ref = "log4jVersion" }
+
+[bundles]
+
+log4j    = [ "log4j-core", "log4j-api" ]
+
+[plugins]
+
