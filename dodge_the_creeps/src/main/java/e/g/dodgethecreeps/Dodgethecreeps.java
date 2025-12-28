@@ -6,6 +6,8 @@ package e.g.dodgethecreeps;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.Vector3f;
+import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.system.AppSettings;
 import com.jme3.system.JmeSystem;
 import com.simsilica.lemur.GuiGlobals;
@@ -21,6 +23,7 @@ import org.je3gl.physics.Dyn4jAppState;
 import org.je3gl.physics.ThreadingType;
 import org.je3gl.physics.control.PhysicsBody2D;
 import org.je3gl.renderer.Camera2DRenderer;
+import org.je3gl.renderer.UnitComparator;
 import org.je3gl.util.TimerAppState;
 
 /**
@@ -86,6 +89,7 @@ public final class Dodgethecreeps extends SimpleApplication {
         
         // Set the camera to 2D, with a distance of 5 units.
         Camera2DRenderer camera2DRenderer = new Camera2DRenderer(Camera2DRenderer.GLRendererType.GLX_25D, 5.0F, 0.01F);
+        camera2DRenderer.setUnitComparator(Vector3f.UNIT_Z, UnitComparator.UType.World, RenderQueue.Bucket.Transparent);
         stateManager.attach(camera2DRenderer);
         
         // auxiliary states

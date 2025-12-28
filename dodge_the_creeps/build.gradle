@@ -1,5 +1,5 @@
 group = 'e.g.dodgethecreeps'
-version = '1.0.5'
+version = '1.0.6'
 
 application {
     mainClass = 'e.g.dodgethecreeps.Dodgethecreeps'
