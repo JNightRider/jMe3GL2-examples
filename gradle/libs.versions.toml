@@ -9,6 +9,7 @@ lemurVersion          = "1.16.0"
 lemurprotoVersion     = "1.13.0"
 groovyVersion         = "3.0.10"
 log4jVersion          = "2.22.0"
+jme3gl2Version        = "3.1.0"
 
 [libraries]
 
@@ -27,6 +28,11 @@ jme3-effects   = { module = "org.jmonkeyengine:jme3-effects", version.ref = "jmo
 
 log4j-core      = { module = "org.apache.logging.log4j:log4j-core", version.ref = "log4jVersion" }
 log4j-api       = { module = "org.apache.logging.log4j:log4j-api",  version.ref = "log4jVersion" }
+
+jme3gl2-core    =  { module = "com.github.JNightRider.jMe3GL2:jMe3GL2-core",    version.ref = "jme3gl2Version" }
+jme3gl2-jawt    =  { module = "com.github.JNightRider.jMe3GL2:jMe3GL2-jawt",    version.ref = "jme3gl2Version" }
+jme3gl2-dyn4j   =  { module = "com.github.JNightRider.jMe3GL2:jMe3GL2-dyn4j",   version.ref = "jme3gl2Version" }
+jme3gl2-plugins =  { module = "com.github.JNightRider.jMe3GL2:jMe3GL2-plugins", version.ref = "jme3gl2Version" }
 
 [bundles]
 

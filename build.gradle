@@ -48,10 +48,13 @@ subprojects {
 
         implementation(libs.particlemonkey)
 
+        // jMe3GL2
+        implementation(libs.jme3gl2.core)
+        implementation(libs.jme3gl2.jawt)
+        implementation(libs.jme3gl2.dyn4j)
+        implementation(libs.jme3gl2.plugins)
+
         // local
-        implementation name: 'jMe3GL2-core-3.0.0'
-        implementation name: 'jMe3GL2-jawt-3.0.0'
-        implementation name: 'jMe3GL2-plugins-3.0.0'
         implementation name: 'jMe3HUDL-1.0-SNAPSHOT'
     }
 
