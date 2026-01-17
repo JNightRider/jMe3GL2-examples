@@ -10,33 +10,46 @@ lemurprotoVersion     = "1.13.0"
 groovyVersion         = "3.0.10"
 log4jVersion          = "2.22.0"
 jme3gl2Version        = "3.1.0"
+nuclearVersion        = "1.0.1"
+lwjgl3                = "3.3.6"
+lwjglNatives          = "<?>"
 
 [libraries]
 
-dyn4j           = { module = "org.dyn4j:dyn4j",                   version.ref = "dyn4jVersion"          }
-lemur           = { module = "com.simsilica:lemur",               version.ref = "lemurVersion"          }
-lemur-proto     = { module = "com.simsilica:lemur-proto",         version.ref = "lemurprotoVersion"     }
-groovy-jsr223   = { module = "org.codehaus.groovy:groovy-jsr223", version.ref = "groovyVersion"         }
-particlemonkey  = { module = "com.epagagames:particlemonkey",     version.ref = "particlemonkeyVersion" }
+dyn4j                = { module = "org.dyn4j:dyn4j",                                version.ref = "dyn4jVersion"          }
+lemur                = { module = "com.simsilica:lemur",                            version.ref = "lemurVersion"          }
+lemur-proto          = { module = "com.simsilica:lemur-proto",                      version.ref = "lemurprotoVersion"     }
+groovy-jsr223        = { module = "org.codehaus.groovy:groovy-jsr223",              version.ref = "groovyVersion"         }
+particlemonkey       = { module = "com.epagagames:particlemonkey",                  version.ref = "particlemonkeyVersion" }
 
-jme3-core      = { module = "org.jmonkeyengine:jme3-core",    version.ref = "jmonkeyengineVersion" }
-jme3-desktop   = { module = "org.jmonkeyengine:jme3-desktop", version.ref = "jmonkeyengineVersion" }
-jme3-lwjgl3    = { module = "org.jmonkeyengine:jme3-lwjgl3",  version.ref = "jmonkeyengineVersion" }
-jme3-plugins   = { module = "org.jmonkeyengine:jme3-plugins", version.ref = "jmonkeyengineVersion" }
-jme3-jogg      = { module = "org.jmonkeyengine:jme3-jogg",    version.ref = "jmonkeyengineVersion" }
-jme3-effects   = { module = "org.jmonkeyengine:jme3-effects", version.ref = "jmonkeyengineVersion" }
+jme3-core            = { module = "org.jmonkeyengine:jme3-core",                    version.ref = "jmonkeyengineVersion" }
+jme3-desktop         = { module = "org.jmonkeyengine:jme3-desktop",                 version.ref = "jmonkeyengineVersion" }
+jme3-lwjgl3          = { module = "org.jmonkeyengine:jme3-lwjgl3",                  version.ref = "jmonkeyengineVersion" }
+jme3-plugins         = { module = "org.jmonkeyengine:jme3-plugins",                 version.ref = "jmonkeyengineVersion" }
+jme3-jogg            = { module = "org.jmonkeyengine:jme3-jogg",                    version.ref = "jmonkeyengineVersion" }
+jme3-effects         = { module = "org.jmonkeyengine:jme3-effects",                 version.ref = "jmonkeyengineVersion" }
 
-log4j-core      = { module = "org.apache.logging.log4j:log4j-core", version.ref = "log4jVersion" }
-log4j-api       = { module = "org.apache.logging.log4j:log4j-api",  version.ref = "log4jVersion" }
+log4j-core           = { module = "org.apache.logging.log4j:log4j-core",            version.ref = "log4jVersion" }
+log4j-api            = { module = "org.apache.logging.log4j:log4j-api",             version.ref = "log4jVersion" }
 
-jme3gl2-core    =  { module = "com.github.JNightRider.jMe3GL2:jMe3GL2-core",    version.ref = "jme3gl2Version" }
-jme3gl2-jawt    =  { module = "com.github.JNightRider.jMe3GL2:jMe3GL2-jawt",    version.ref = "jme3gl2Version" }
-jme3gl2-dyn4j   =  { module = "com.github.JNightRider.jMe3GL2:jMe3GL2-dyn4j",   version.ref = "jme3gl2Version" }
-jme3gl2-plugins =  { module = "com.github.JNightRider.jMe3GL2:jMe3GL2-plugins", version.ref = "jme3gl2Version" }
+jme3gl2-core         = { module = "com.github.JNightRider.jMe3GL2:jMe3GL2-core",    version.ref = "jme3gl2Version" }
+jme3gl2-jawt         = { module = "com.github.JNightRider.jMe3GL2:jMe3GL2-jawt",    version.ref = "jme3gl2Version" }
+jme3gl2-dyn4j        = { module = "com.github.JNightRider.jMe3GL2:jMe3GL2-dyn4j",   version.ref = "jme3gl2Version" }
+jme3gl2-plugins      = { module = "com.github.JNightRider.jMe3GL2:jMe3GL2-plugins", version.ref = "jme3gl2Version" }
+
+nuclear              = { module = "com.github.JNightRider:Nuclear",                 version.ref = "nuclearVersion" }
+
+lwjgl-stb            = { module = "org.lwjgl:lwjgl-stb",                            version.ref = "lwjgl3" }
+lwjgl-bom            = { module = "org.lwjgl:lwjgl-bom",                            version.ref = "lwjgl3" }
+lwjgl-nuklear        = { module = "org.lwjgl:lwjgl-nuklear",                        version.ref = "lwjgl3" }
+lwjgl-nuklear-native = { module = "org.lwjgl:lwjgl-nuklear",                        version.ref = "lwjglNatives" }
+lwjgl-stb-native     = { module = "org.lwjgl:lwjgl-stb",                            version.ref = "lwjglNatives" }
 
 [bundles]
 
-log4j    = [ "log4j-core", "log4j-api" ]
+log4j             = [ "log4j-core",     "log4j-api"             ]
+lwjgl-stb         = [ "lwjgl-stb",      "lwjgl-stb-native"      ]
+lwjgl-nuklear     = [ "lwjgl-nuklear",  "lwjgl-nuklear-native"  ]
 
 [plugins]
 

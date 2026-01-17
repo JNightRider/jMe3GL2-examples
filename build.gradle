@@ -1,12 +1,12 @@
 allprojects {
     repositories {
+        mavenCentral()
+        mavenLocal()
+        maven { url = uri("https://jitpack.io") }
         // to find libraries in the project's "lib" directory
         flatDir {
             dirs "${rootProject.projectDir}/lib"
         }
-        maven { url = uri("https://jitpack.io") }
-        mavenCentral()
-        mavenLocal()
     }
 }
 
@@ -29,7 +29,19 @@ subprojects {
     dependencies {
         // You can read more about how to add dependencies here:
         //   https://docs.gradle.org/current/userguide/dependency_management.html#sec:how_to_declare_your_dependencies
+        //===----------------------------------------------------------------===
+        //                          LWJGL3
+        //===----------------------------------------------------------------===
+        implementation platform(libs.lwjgl.bom)
+        
+        // Nuklear
+        implementation (libs.bundles.lwjgl.nuklear)
+        implementation (libs.bundles.lwjgl.stb)
+        implementation (libs.nuclear)
 
+        //===----------------------------------------------------------------===
+        //                          jMonkeyEngine3
+        //===----------------------------------------------------------------===
         implementation(libs.jme3.core)
         implementation(libs.jme3.desktop)
         runtimeOnly(libs.jme3.jogg)
@@ -38,21 +50,29 @@ subprojects {
         implementation(libs.jme3.effects)
         runtimeOnly(libs.jme3.lwjgl3)
 
-        implementation(libs.dyn4j)
-
+        //===----------------------------------------------------------------===
+        //                            Lemur GUI
+        //===----------------------------------------------------------------===
         implementation(libs.lemur)
         implementation(libs.lemur.proto)
         runtimeOnly(libs.groovy.jsr223)
 
-        implementation(libs.bundles.log4j)
-
-        implementation(libs.particlemonkey)
-
-        // jMe3GL2
+        //===----------------------------------------------------------------===
+        //                            jMe3GL2
+        //===----------------------------------------------------------------===
         implementation(libs.jme3gl2.core)
         implementation(libs.jme3gl2.jawt)
         implementation(libs.jme3gl2.dyn4j)
         implementation(libs.jme3gl2.plugins)
+        implementation(libs.dyn4j)
+
+        //===----------------------------------------------------------------===
+        //                          Other
+        //===----------------------------------------------------------------===
+        // plugins
+        implementation(libs.bundles.log4j)
+
+        implementation(libs.particlemonkey)
 
         // local
         implementation name: 'jMe3HUDL-1.0-SNAPSHOT'
@@ -60,22 +80,16 @@ subprojects {
 
     // cleanup tasks
     clean.dependsOn('cleanDLLs', 'cleanDyLibs', 'cleanLogs', 'cleanSOs')
-    task cleanDLLs(type: Delete) {
+    tasks.register('cleanDLLs', Delete) {
         delete fileTree(dir: '.', include: '*.dll')
     }
-    task cleanDyLibs(type: Delete) {
+    tasks.register('cleanDyLibs', Delete) {
         delete fileTree(dir: '.', include: '*.dylib')
     }
-    task cleanLogs(type: Delete) {
+    tasks.register('cleanLogs', Delete) {
         delete fileTree(dir: '.', include: 'hs_err_pid*.log')
     }
-    task cleanSOs(type: Delete) {
+    tasks.register('cleanSOs', Delete) {
         delete fileTree(dir: '.', include: '*.so')
-    }
-
-    task fund(){
-        doLast {
-           java.awt.Desktop.desktop.browse "https://start.jmonkeyengine.org/#!funding=JME_DESKTOP,JME_EFFECTS,LEMUR,LOG4J2,8113%2F189b56af-a1be-4036-8ac7-2b62a94935ff".toURI()
-        }
     }
 }
