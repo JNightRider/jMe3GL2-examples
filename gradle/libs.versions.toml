@@ -10,13 +10,16 @@ lemurprotoVersion     = "1.13.0"
 groovyVersion         = "3.0.10"
 log4jVersion          = "2.22.0"
 jme3gl2Version        = "3.2.0"
+box2djniVersion       = "2.1.0"
 nuclearVersion        = "1.0.1"
 lwjgl3                = "3.4.3"
 lwjglNatives          = "<?>"
 
 [libraries]
 
-dyn4j                = { module = "org.dyn4j:dyn4j",                                version.ref = "dyn4jVersion"          }
+box2d-jni            = { module = "io.github.jnightrider:box2d-jni",                version.ref = "box2djniVersion" }
+dyn4j                = { module = "org.dyn4j:dyn4j",                                version.ref = "dyn4jVersion"    }
+
 lemur                = { module = "com.simsilica:lemur",                            version.ref = "lemurVersion"          }
 lemur-proto          = { module = "com.simsilica:lemur-proto",                      version.ref = "lemurprotoVersion"     }
 groovy-jsr223        = { module = "org.codehaus.groovy:groovy-jsr223",              version.ref = "groovyVersion"         }
