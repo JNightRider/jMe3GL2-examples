@@ -22,7 +22,7 @@ import javax.imageio.ImageIO;
 import org.je3gl.physics.Dyn4jAppState;
 import org.je3gl.physics.ThreadingType;
 import org.je3gl.physics.control.PhysicsBody2D;
-import org.je3gl.renderer.Camera2DRenderer;
+import org.je3gl.renderer.Camera2DAppSate;
 import org.je3gl.renderer.UnitComparator;
 import org.je3gl.util.TimerAppState;
 
@@ -88,7 +88,7 @@ public final class Dodgethecreeps extends SimpleApplication {
         stateManager.attach(dyn4jAppState);
         
         // Set the camera to 2D, with a distance of 5 units.
-        Camera2DRenderer camera2DRenderer = new Camera2DRenderer(Camera2DRenderer.GLRendererType.GLX_25D, 5.0F, 0.01F);
+        Camera2DAppSate camera2DRenderer = new Camera2DAppSate(1.0f);
         camera2DRenderer.setUnitComparator(Vector3f.UNIT_Z, UnitComparator.UType.World, RenderQueue.Bucket.Transparent);
         stateManager.attach(camera2DRenderer);
         
