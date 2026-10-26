@@ -56,4 +56,9 @@ public final class LayerFilter implements Filter {
     public String toString() {
         return "LayerFilter[" + "layer=" + layer + ']';
     }
+
+    @Override
+    public Filter copy() {
+        return new LayerFilter(layer);
+    }
 }

@@ -16,8 +16,8 @@ subprojects {
     apply plugin: 'idea'
 
     java {
-        sourceCompatibility = '17'
-        targetCompatibility = '17'
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     application {
@@ -63,6 +63,7 @@ subprojects {
         implementation(libs.jme3gl2.core)
         implementation(libs.jme3gl2.jawt)
         implementation(libs.jme3gl2.dyn4j)
+        implementation(libs.jme3gl2.box2d)
         implementation(libs.jme3gl2.plugins)
         implementation(libs.dyn4j)
 
