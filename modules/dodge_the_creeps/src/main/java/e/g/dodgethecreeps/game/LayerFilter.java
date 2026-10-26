@@ -57,6 +57,10 @@ public final class LayerFilter implements Filter {
         return "LayerFilter[" + "layer=" + layer + ']';
     }
 
+    /**
+     * (non-JavaDoc)
+     * @return Filter
+     */
     @Override
     public Filter copy() {
         return new LayerFilter(layer);
