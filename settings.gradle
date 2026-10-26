@@ -15,9 +15,9 @@ dependencyResolutionManagement {
                     def osArch = System.getProperty("os.arch")
                     if (osArch.startsWith("arm") || osArch.startsWith("aarch64")) {
                         lwjglNatives += osArch.contains("64") || osArch.startsWith("armv8") ? "-arm64" : "-arm32"
-                    } else if  (osArch.startsWith("ppc")) {
+                    } else if (osArch.startsWith("ppc")) {
                         lwjglNatives += "-ppc64le"
-                    } else if  (osArch.startsWith("riscv")) {
+                    } else if (osArch.startsWith("riscv")) {
                         lwjglNatives += "-riscv64"
                     }
                     break
@@ -36,5 +36,6 @@ dependencyResolutionManagement {
     }
 }
 
-include (':modules:dodge_the_creeps')
+include(':modules:dodge_the_creeps')
+include(':modules:tappy_plane')
 
