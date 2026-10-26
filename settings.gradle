@@ -36,5 +36,5 @@ dependencyResolutionManagement {
     }
 }
 
-include ('dodge_the_creeps')
+include (':modules:dodge_the_creeps')
 
