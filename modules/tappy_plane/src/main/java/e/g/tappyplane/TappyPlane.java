@@ -9,6 +9,8 @@ import com.jme3.math.Vector3f;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.system.AppSettings;
 
+import e.g.tappyplane.screen.GameSceneAppState;
+
 import org.je3gl.box2d.Box2dAppState;
 import org.je3gl.box2d.ThreadingType;
 import org.je3gl.renderer.Camera2DAppSate;
@@ -19,8 +21,8 @@ import org.je3gl.util.TimerAppState;
  * Main class for the game <b>Tappy Plane</b>.
  *
  * @author wil
- * @version 1.0.5
- * @since 1.0.0
+ * @version 1.0.0
+ * @since 1.1.0
  */
 public class TappyPlane extends SimpleApplication {
 
@@ -58,14 +60,18 @@ public class TappyPlane extends SimpleApplication {
         Box2dAppState box2dAppState = new Box2dAppState(ThreadingType.SEQUENTIAL);
         box2dAppState.setDebugEnabled(true);
         stateManager.attach(box2dAppState);
-        
+
         // Set the camera to 2D, with a distance of 5 units.
         Camera2DAppSate camera2DRenderer = new Camera2DAppSate(1.0f);
         camera2DRenderer.setUnitComparator(Vector3f.UNIT_Z, UnitComparator.UType.World, RenderQueue.Bucket.Transparent);
         stateManager.attach(camera2DRenderer);
-        
+
         // auxiliary states
         TimerAppState timerAppState = new TimerAppState();
         stateManager.attach(timerAppState);
+
+        // scene states; where the game is managed
+        GameSceneAppState gameAppState  = new GameSceneAppState();
+        stateManager.attach(gameAppState);
     }
 }
