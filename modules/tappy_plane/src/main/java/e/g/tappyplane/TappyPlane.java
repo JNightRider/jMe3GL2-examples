@@ -15,6 +15,9 @@ import e.g.tappyplane.screen.GameSceneAppState;
 
 import org.je3gl.box2d.Box2dAppState;
 import org.je3gl.box2d.ThreadingType;
+import org.je3gl.jawt.JAWTResolution;
+import org.je3gl.jawt.Jme3GL2DefaultDisplaySystem;
+import org.je3gl.jawt.Jme3GL2DisplaySystem;
 import org.je3gl.plugins.input.InputHandlerAppState;
 import org.je3gl.renderer.Camera2DAppSate;
 import org.je3gl.renderer.UnitComparator;
@@ -44,6 +47,16 @@ public class TappyPlane extends SimpleApplication {
         
         // set "Width" to 1024 and "Height" to 576.
         settings.setResolution(1024, 576);
+
+        // Get the resolution of the user's current screen.
+        boolean isFullScreen = true;
+        Jme3GL2DisplaySystem displaySystem = Jme3GL2DefaultDisplaySystem.getDisplaySystem();
+        JAWTResolution resolution = isFullScreen 
+                ? displaySystem.getFullScreenResolution()
+                : JAWTResolution.TEST_RESOLUTION;
+
+        settings.setFullscreen(displaySystem.isFullScreenSupported() && isFullScreen);
+        settings.setResolution(resolution.getWidth(), resolution.getHeight());
         
         // Set a title for the window and an icon.
         settings.setTitle("Tappy Plane");
@@ -61,7 +74,7 @@ public class TappyPlane extends SimpleApplication {
     public void simpleInitApp() {
         // The physical state is initialized.
         Box2dAppState box2dAppState = new Box2dAppState(ThreadingType.SEQUENTIAL);
-        box2dAppState.setDebugEnabled(true);
+        box2dAppState.setDebugEnabled(false);
         stateManager.attach(box2dAppState);
 
         // Set the camera to 2D, with a distance of 5 units.
