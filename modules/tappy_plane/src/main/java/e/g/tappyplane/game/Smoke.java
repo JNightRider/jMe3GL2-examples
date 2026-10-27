@@ -23,29 +23,68 @@ import org.je3gl.scene.shape.Sprite;
 import static org.je3gl.utilities.MaterialUtilities.*;
 
 /**
+ * Smoke particle.
+ *
+ * <p>
+ * This creates a small smoke particle that expands and contracts (changes
+ * scale), while gradually fading away until it disappears from the scene.
+ * </p>
  *
  * @author wil
+ * @version 1.0.0
+ * @since 1.1.0
  */
-public class Smoke extends AbstractControl {
+public final class Smoke extends AbstractControl {
 
+    /** An atomic vector for the alpha channel of the smoke color. */
     private static final Vector1f ALPHA = new Vector1f(0);
 
+    /**
+     * The scale of the initial or original size that the smoke may have, which
+     * is 100%.
+     */
     private static final Vector3f VF_100 = new Vector3f(1.0f, 1.0f, 1.0f);
+
+    /**
+     * The scale of the final or minimum size that the smoke can reach, which is
+     * 50%.
+     */
     private static final Vector3f VF_50 = new Vector3f(0.5f, 0.5f, 1.0f);
 
+    /** Scaling animation speed. */
     private final float speed = 3.5f;
 
+    /** Smoke alpha channel (color). */
     private final Vector1f alpha = new Vector1f(1.0f);
+    /** Smoke size scale. */
     private final Vector3f scale = new Vector3f(VF_50);
+    /** The color of the smoke. */
     private final ColorRGBA color = new ColorRGBA(1.0f, 1.0f, 1.0f, 1.0f);
 
+    /** The world's camera.  */
     private final Camera camera;
+
+    /**
+     * An indicator that determines the direction of the scale; if {@code true},
+     * the scale will increase up to the value of {@link #VF_100}; otherwise, it
+     * will decrease down to the value of {@link #VF_50}.
+     */
     private boolean increment = true;
 
+    /**
+     * Constructor.
+     *
+     * @param camera Camera
+     */
     public Smoke(Camera camera) {
         this.camera = camera;
     }
 
+    /**
+     * Simple update.
+     *
+     * @param tpf float
+     */
     @Override
     protected void controlUpdate(float tpf) {
         if (increment) {
@@ -67,6 +106,12 @@ public class Smoke extends AbstractControl {
         }
     }
 
+    /**
+     * Check whether the smoke particle is at a point in its life cycle (i.e.,
+     * it is neither off-screen nor invisible).
+     *
+     * @return boolean
+     */
     private boolean checkOutOfBounds() {
         if (alpha.isSimilar(ALPHA, 0.05f)) {
             return true;
@@ -100,14 +145,14 @@ public class Smoke extends AbstractControl {
         Material mat = getUnshadedMaterialFromClassPath(assetManager, "Textures/smoke.png");
         mat.setFloat("AlphaDiscardThreshold", 0.1F);
         mat.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
-        
+
         Sprite sprite = new Sprite(1.2f, 1.0f);
         Geometry geom = new Geometry("Player", sprite);
         geom.setMaterial(mat);
         geom.setLocalScale(VF_50.x);
         geom.setLocalTranslation(position);
         geom.setQueueBucket(RenderQueue.Bucket.Transparent);
-        
+
         Smoke smoke = new Smoke(app.getCamera());
         geom.addControl(smoke);
         return smoke;
