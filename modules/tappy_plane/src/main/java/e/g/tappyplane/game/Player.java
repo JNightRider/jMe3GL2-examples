@@ -10,6 +10,7 @@ import com.jme3.input.MouseInput;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState;
 import com.jme3.math.FastMath;
+import com.jme3.math.Vector3f;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
 import e.g.tappyplane.TappyPlane;
@@ -129,7 +130,8 @@ public class Player extends RigidBody2D {
 
     private void smoke() {
         Sprite sprite = (Sprite) ((Geometry) getJmeObject()).getMesh();
-        Smoke smoke = Smoke.getNewInstanceSmoke(app, getPosition().add(-sprite.getWidth() / 2.0f, 0.0f, 0.0f));
+        Vector3f nPos = getPosition().add(-sprite.getWidth() / 2.0f, 0.0f, 0.0f);
+        Smoke smoke = Smoke.getNewInstanceSmoke(app, nPos.setZ(-0.1f));
         spatial.getParent().attachChild(smoke.getSpatial());
     }
 
