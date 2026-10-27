@@ -72,7 +72,7 @@ public class GameSceneAppState extends AbstractScreen {
         rootNode.attachChild(player.getJmeObject());
         camera2D.setTarget(player.getJmeObject());
 
-        Ground ground = Ground.getNewInstanceGround(app, GroundType.GRASS);
+        Ground ground = Ground.getNewInstanceGround(app, GroundType.GRASS, 2);
         rootNode.attachChild(ground.getJmeObject());
     }
 }

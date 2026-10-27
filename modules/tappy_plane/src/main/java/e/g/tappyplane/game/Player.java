@@ -184,7 +184,7 @@ public class Player extends RigidBody2D {
             try (ArenaAlloc arena = allocPush()) {
                 b2ShapeDef shapeDef = b2DefaultShapeDef(b2ShapeDef.calloc(arena));
                 b2Circle circle = b2Circle.calloc(arena);
-                circle.radius(1.0f);
+                circle.radius(0.5f);
                 player.addCircleShape(shapeDef, circle);
             }
         }
