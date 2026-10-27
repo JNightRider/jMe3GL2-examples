@@ -5,9 +5,13 @@
 package e.g.tappyplane.screen;
 
 import com.jme3.app.Application;
+import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import e.g.tappyplane.TappyPlane;
 import e.g.tappyplane.game.Player;
+import e.g.tappyplane.game.Smoke;
+import org.je3gl.plugins.input.InputHandlerAppState;
+import org.je3gl.renderer.Camera2DAppSate;
 
 /**
  * A state for the game logic.
@@ -18,6 +22,8 @@ import e.g.tappyplane.game.Player;
  */
 public class GameSceneAppState extends AbstractScreen {
 
+    private Camera2DAppSate camera2D;
+    
     /** Root node for this state. */
     private Node rootNode;
 
@@ -39,6 +45,15 @@ public class GameSceneAppState extends AbstractScreen {
         //----------------------------------------------------------------------
         rootNode = new Node("MyRootNode");
         application.getRootNode().attachChild(rootNode);
+        
+        //----------------------------------------------------------------------
+        //                              SCENE
+        //----------------------------------------------------------------------
+        InputHandlerAppState handlerAppState = getState(InputHandlerAppState.class);
+        handlerAppState.addInputHandler(Player.VK_JUMP).install();
+        handlerAppState.addInputHandler(Player.VM_JUMP).install();
+        
+        camera2D = getState(Camera2DAppSate.class);
     }
     
     
@@ -51,7 +66,8 @@ public class GameSceneAppState extends AbstractScreen {
         super.onEnable();
         TappyPlane app = (TappyPlane) getApplication();
 
-        player = Player.getNewInstancePlayer(app);
+        player = Player.getNewInstancePlayer(app, true);
         rootNode.attachChild(player.getJmeObject());
+        camera2D.setTarget(player.getJmeObject());
     }
 }

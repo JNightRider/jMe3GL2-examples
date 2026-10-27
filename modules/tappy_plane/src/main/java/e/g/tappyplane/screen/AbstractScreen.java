@@ -6,6 +6,8 @@ package e.g.tappyplane.screen;
 
 import com.jme3.app.Application;
 import com.jme3.app.state.BaseAppState;
+import e.g.tappyplane.TappyPlane;
+import e.g.tappyplane.game.Background;
 
 /**
  * Abstract class for all game screens.
@@ -16,6 +18,8 @@ import com.jme3.app.state.BaseAppState;
  */
 public abstract class AbstractScreen extends BaseAppState {
 
+    protected Background background;
+    
     /**
      * (non-JavaDoc)
      *
@@ -24,7 +28,8 @@ public abstract class AbstractScreen extends BaseAppState {
      */
     @Override
     protected void initialize(Application app) {
-
+        TappyPlane application = (TappyPlane) app;
+        background = Background.getNewInstanceSmoke(application);
     }
 
     /**
@@ -44,7 +49,8 @@ public abstract class AbstractScreen extends BaseAppState {
      */
     @Override
     protected void onEnable() {
-
+        TappyPlane application = (TappyPlane) getApplication();
+        application.getRootNode().attachChild(background.getSpatial());
     }
 
     /**
@@ -54,6 +60,6 @@ public abstract class AbstractScreen extends BaseAppState {
      */
     @Override
     protected void onDisable() {
-
+        background.getSpatial().removeFromParent();
     }
 }

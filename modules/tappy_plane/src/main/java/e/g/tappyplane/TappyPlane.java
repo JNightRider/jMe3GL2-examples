@@ -5,6 +5,8 @@
 package e.g.tappyplane;
 
 import com.jme3.app.SimpleApplication;
+import com.jme3.math.ColorRGBA;
+import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.system.AppSettings;
@@ -13,6 +15,7 @@ import e.g.tappyplane.screen.GameSceneAppState;
 
 import org.je3gl.box2d.Box2dAppState;
 import org.je3gl.box2d.ThreadingType;
+import org.je3gl.plugins.input.InputHandlerAppState;
 import org.je3gl.renderer.Camera2DAppSate;
 import org.je3gl.renderer.UnitComparator;
 import org.je3gl.util.TimerAppState;
@@ -64,14 +67,22 @@ public class TappyPlane extends SimpleApplication {
         // Set the camera to 2D, with a distance of 5 units.
         Camera2DAppSate camera2DRenderer = new Camera2DAppSate(1.0f);
         camera2DRenderer.setUnitComparator(Vector3f.UNIT_Z, UnitComparator.UType.World, RenderQueue.Bucket.Transparent);
+        camera2DRenderer.setOffset(new Vector2f(4.0f, 0.0f));
         stateManager.attach(camera2DRenderer);
 
         // auxiliary states
         TimerAppState timerAppState = new TimerAppState();
         stateManager.attach(timerAppState);
 
+        // dynamic input handler
+        InputHandlerAppState inputHandlerAppState = new InputHandlerAppState();
+        stateManager.attach(inputHandlerAppState);
+
         // scene states; where the game is managed
         GameSceneAppState gameAppState  = new GameSceneAppState();
         stateManager.attach(gameAppState);
+
+        // set the background color. [0.835f, 0.929f, 0.969f, 1.0f]
+        viewPort.setBackgroundColor(new ColorRGBA(1.0f, 1.0f, 1.0f, 1.0f));
     }
 }
