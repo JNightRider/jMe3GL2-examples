@@ -8,8 +8,10 @@ import com.jme3.app.Application;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import e.g.tappyplane.TappyPlane;
+import e.g.tappyplane.game.Ground;
 import e.g.tappyplane.game.Player;
 import e.g.tappyplane.game.Smoke;
+import e.g.tappyplane.game.enums.GroundType;
 import org.je3gl.plugins.input.InputHandlerAppState;
 import org.je3gl.renderer.Camera2DAppSate;
 
@@ -69,5 +71,8 @@ public class GameSceneAppState extends AbstractScreen {
         player = Player.getNewInstancePlayer(app, true);
         rootNode.attachChild(player.getJmeObject());
         camera2D.setTarget(player.getJmeObject());
+
+        Ground ground = Ground.getNewInstanceGround(app, GroundType.GRASS);
+        rootNode.attachChild(ground.getJmeObject());
     }
 }

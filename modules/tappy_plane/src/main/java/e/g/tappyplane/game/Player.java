@@ -86,6 +86,7 @@ public class Player extends RigidBody2D {
             jump = false;
             smoke();
         }
+        checkContactEvents();
     }
 
     @Override
@@ -105,7 +106,6 @@ public class Player extends RigidBody2D {
             b2MakeRot(angle.x, transform.q());
             b2Body_SetTransform(bodyId, transform.p(), transform.q());
         }
-        checkContactEvents();
     }
 
     private void checkContactEvents() {
@@ -119,9 +119,9 @@ public class Player extends RigidBody2D {
                 b2ShapeId bodyB = event.shapeIdB();
 
                 if (B2_ID_EQUALS(bodyA, bodyId)) {
-                    System.out.println("dead()");
+                    queueFree();
                 } else if (B2_ID_EQUALS(bodyB, bodyId)) {
-                    System.out.println("dead()");
+                    queueFree();
                 }
             }
         }
@@ -131,6 +131,15 @@ public class Player extends RigidBody2D {
         Sprite sprite = (Sprite) ((Geometry) getJmeObject()).getMesh();
         Smoke smoke = Smoke.getNewInstanceSmoke(app, getPosition().add(-sprite.getWidth() / 2.0f, 0.0f, 0.0f));
         spatial.getParent().attachChild(smoke.getSpatial());
+    }
+
+    @Override
+    public void queueFree() {
+        if (spatial.removeFromParent()) {
+            physicsSpace.enqueue(() -> {
+                physicsSpace.removeBody(this);
+            });
+        }
     }
 
     /**
