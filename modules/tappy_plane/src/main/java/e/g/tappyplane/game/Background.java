@@ -207,7 +207,7 @@ public final class Background extends AbstractControl {
      * @param app main application
      * @return Background
      */
-    public static Background getNewInstanceSmoke(TappyPlane app) {
+    public static Background getNewInstanceBackground(TappyPlane app) {
         AssetManager assetManager = app.getAssetManager();
 
         Background background = new Background(app.getCamera());

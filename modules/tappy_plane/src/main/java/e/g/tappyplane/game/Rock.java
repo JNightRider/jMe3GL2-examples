@@ -4,7 +4,6 @@
  */
 package e.g.tappyplane.game;
 
-
 import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
 import com.jme3.math.Vector3f;
@@ -97,7 +96,7 @@ public final class Rock extends KinematicBody2D {
      * @param isDown
      * @return Rock
      */
-    public static Rock getNewInstanceGround(TappyPlane app, RockType type, boolean isDown) {
+    public static Rock getNewInstanceRock(TappyPlane app, RockType type, boolean isDown) {
         AssetManager assetManager = app.getAssetManager();
         PhysicsSpace physicsSpace = app.getStateManager()
                                         .getState(Box2dAppState.class)

@@ -218,7 +218,7 @@ public final class Ground extends KinematicBody2D {
               yInit = isDown ? myGround.getApp().getCamera().getFrustumTop() : myGround.getPosition().y;
 
         for (int i = 0; i < myGround.getRockCount(); i++) {
-            Rock rock = Rock.getNewInstanceGround(myGround.getApp(), myGround.getType().getRockType(), isDown);
+            Rock rock = Rock.getNewInstanceRock(myGround.getApp(), myGround.getType().getRockType(), isDown);
             Sprite sprite = rock.getSprite();
 
             float w = sprite.getWidth();

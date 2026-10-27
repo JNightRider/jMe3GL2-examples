@@ -11,6 +11,7 @@ import e.g.tappyplane.TappyPlane;
 import e.g.tappyplane.game.Ground;
 import e.g.tappyplane.game.Player;
 import e.g.tappyplane.game.Smoke;
+import e.g.tappyplane.game.Terrain;
 import e.g.tappyplane.game.enums.GroundType;
 import org.je3gl.plugins.input.InputHandlerAppState;
 import org.je3gl.renderer.Camera2DAppSate;
@@ -72,7 +73,7 @@ public class GameSceneAppState extends AbstractScreen {
         rootNode.attachChild(player.getJmeObject());
         camera2D.setTarget(player.getJmeObject());
 
-        Ground ground = Ground.getNewInstanceGround(app, GroundType.GRASS, 2);
-        rootNode.attachChild(ground.getJmeObject());
+        Terrain terrain = Terrain.getNewInstanceTerrain(app);
+        rootNode.attachChild(terrain.getSpatial());
     }
 }

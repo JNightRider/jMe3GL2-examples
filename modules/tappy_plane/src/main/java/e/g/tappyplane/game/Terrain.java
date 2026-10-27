@@ -18,17 +18,13 @@ import java.util.List;
  */
 public class Terrain extends AbstractControl {
     
-    private static final class GroundSegment extends Node {
-        
-    }
-    
-    private final List<GroundSegment> groundList = new ArrayList<>();
-    
     private TappyPlane applicatio;
 
     public Terrain(TappyPlane applicatio) {
         this.applicatio = applicatio;
     }
+    
+    
 
     @Override
     protected void controlUpdate(float tpf) {
@@ -39,4 +35,22 @@ public class Terrain extends AbstractControl {
     protected void controlRender(RenderManager rm, ViewPort vp) {
         
     }    
+    
+    /**
+     * Returns a new instance of the terrain.
+     *
+     * @param app main application
+     * @return Terrain
+     */
+    public static Terrain getNewInstanceTerrain(TappyPlane app) {
+        Node rootNode = new Node("Terrain");
+        
+        for (int i = 0; i < 3; i++) {
+            
+        }
+        
+        Terrain terrain = new Terrain(app);
+        rootNode.addControl(terrain);
+        return terrain;
+    }
 }

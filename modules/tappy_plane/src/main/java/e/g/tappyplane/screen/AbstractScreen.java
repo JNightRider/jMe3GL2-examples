@@ -29,7 +29,7 @@ public abstract class AbstractScreen extends BaseAppState {
     @Override
     protected void initialize(Application app) {
         TappyPlane application = (TappyPlane) app;
-        background = Background.getNewInstanceSmoke(application);
+        background = Background.getNewInstanceBackground(application);
     }
 
     /**
