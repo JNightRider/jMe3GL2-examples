@@ -5,7 +5,7 @@
 package e.g.tappyplane.game.enums;
 
 /**
- * Enumerated class responsible for listing the available terrain types.
+ * Enumerated class responsible for listing the available ground types.
  *
  * @author wil
  * @version 1.0.0
@@ -13,15 +13,15 @@ package e.g.tappyplane.game.enums;
  */
 public enum GroundType {
 
-    /** Terrain type: Dirt */
+    /** Ground type: Dirt */
     DIRT("Textures/groundDirt.png"),
-    /** Terrain type: Grass */
+    /** Ground type: Grass */
     GRASS("Textures/groundGrass.png"),
-    /** Terrain type: Ice */
+    /** Ground type: Ice */
     ICE("Textures/groundIce.png"),
-    /** Terrain type: Rock */
+    /** Ground type: Rock */
     ROCK("Textures/groundRock.png"),
-    /** Terrain type: Snow */
+    /** Ground type: Snow */
     SNOW("Textures/groundSnow.png");
 
     /**

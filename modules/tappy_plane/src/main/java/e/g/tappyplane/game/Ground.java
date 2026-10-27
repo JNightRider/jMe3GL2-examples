@@ -30,7 +30,7 @@ import org.je3gl.scene.shape.Sprite;
 import static org.je3gl.utilities.MaterialUtilities.*;
 
 /**
- * The terrain that appears in the scenes.
+ * The ground that appears in the scenes.
  *
  * @see GroundType
  *
@@ -105,7 +105,6 @@ public final class Ground extends KinematicBody2D {
         geom.setQueueBucket(RenderQueue.Bucket.Transparent);
 
         Ground ground = new Ground(app.getCamera());
-        //ground.setType(b2_staticBody);
         ground.setPosition(new Vector2f(0, -5));
         physicsSpace.addBody(ground);
         try (ArenaAlloc arena = allocPush()) {
