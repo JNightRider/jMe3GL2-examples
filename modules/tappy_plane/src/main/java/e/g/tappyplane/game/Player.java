@@ -87,9 +87,7 @@ public class Player extends RigidBody2D {
         shapeId = super.addCapsuleShape(shapeDef, shape);
         return shapeId;
     }
-    
-    
-    
+
     private final TimerTask onTimerTask = (t) -> {
         linearVelocity.x += 0.5f;
         speeedAnimation += 0.025f;

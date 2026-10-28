@@ -49,7 +49,7 @@ public class TappyPlane extends SimpleApplication {
         settings.setResolution(1024, 576);
 
         // Get the resolution of the user's current screen.
-        boolean isFullScreen = true;
+        boolean isFullScreen = false;
         Jme3GL2DisplaySystem displaySystem = Jme3GL2DefaultDisplaySystem.getDisplaySystem();
         JAWTResolution resolution = isFullScreen 
                 ? displaySystem.getFullScreenResolution()
@@ -91,6 +91,10 @@ public class TappyPlane extends SimpleApplication {
         // dynamic input handler
         InputHandlerAppState inputHandlerAppState = new InputHandlerAppState();
         stateManager.attach(inputHandlerAppState);
+
+        // GUI Cursor
+        GUICursor cursor = new GUICursor(inputManager, assetManager);
+        cursor.install();
 
         // scene states; where the game is managed
         GameSceneAppState gameAppState  = new GameSceneAppState();
