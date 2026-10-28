@@ -12,6 +12,7 @@ import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.system.AppSettings;
 
 import e.g.tappyplane.screen.GameSceneAppState;
+import e.g.tappyplane.screen.MainSceneAppState;
 
 import org.je3gl.box2d.Box2dAppState;
 import org.je3gl.box2d.ThreadingType;
@@ -97,7 +98,9 @@ public class TappyPlane extends SimpleApplication {
         cursor.install();
 
         // scene states; where the game is managed
+        MainSceneAppState mainAppSate   = new MainSceneAppState();
         GameSceneAppState gameAppState  = new GameSceneAppState();
+        stateManager.attach(mainAppSate);
         stateManager.attach(gameAppState);
 
         // set the background color. [0.835f, 0.929f, 0.969f, 1.0f]

@@ -5,17 +5,24 @@
 package e.g.tappyplane.game;
 
 import com.jme3.asset.AssetManager;
+import com.jme3.collision.CollisionResults;
+import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
 import com.jme3.input.MouseInput;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState;
 import com.jme3.math.FastMath;
+import com.jme3.math.Ray;
+import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
+import com.jme3.renderer.Camera;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
 import e.g.tappyplane.TappyPlane;
+import e.g.tappyplane.game.anim.TapAnimation;
 import e.g.tappyplane.math.Vector1f;
 import e.g.tappyplane.screen.GameSceneAppState;
+import java.util.Objects;
 
 import org.box2d.jni.*;
 import org.box2d.jni.system.*;
@@ -53,11 +60,6 @@ public class Player extends RigidBody2D {
 
     public static final BooleanStateMouseInputHandler VM_JUMP = new BooleanStateMouseInputHandler(
             new MouseButton(MouseInput.BUTTON_LEFT, "MOUSE_JUMP")
-    );
-
-    public static final BooleanStateKeyboardInputHandler VK_JUMP = new BooleanStateKeyboardInputHandler(
-            new Key(KeyInput.KEY_SPACE, "KEY_JUMP"),
-            new Key(KeyInput.KEY_UP, "KEY_JUMP0")
     );
 
     /**  Main application. */
@@ -137,14 +139,29 @@ public class Player extends RigidBody2D {
             velocity.x(currentLinearVelcity.x);
             b2Body_SetLinearVelocity(bodyId, velocity);
 
-            if (VK_JUMP.isActiveButNotHandled() || VM_JUMP.isActiveButNotHandled()) {
-                VK_JUMP.setHasBeenHandled(true);
+            if (VM_JUMP.isActiveButNotHandled()) {
                 VM_JUMP.setHasBeenHandled(true);
 
-                jump = true;
-                angle.x = FastMath.PI / 4.0f;
-                float mass = b2Body_GetMass(bodyId);
-                b2Body_ApplyForceToCenter(bodyId, b2Vec2.calloc(arena).set(0.0f, 750.0f * mass), true);
+                Camera cam = app.getCamera();
+                InputManager inputManager = app.getInputManager();
+                CollisionResults results = new CollisionResults();
+
+                Vector2f click2d = inputManager.getCursorPosition();
+                Vector3f click3d = cam.getWorldCoordinates(new Vector2f(click2d.x, click2d.y), 0f).clone();
+                Vector3f dir = cam.getWorldCoordinates(new Vector2f(click2d.x, click2d.y), 1f).subtractLocal(click3d).normalizeLocal();
+
+                Ray ray = new Ray(click3d, dir);
+                getJmeObject().getParent().collideWith(ray, results);
+
+                if (results.size() > 0) {
+                    Geometry target = results.getClosestCollision().getGeometry();
+                    if (Objects.equals(target, getJmeObject())) {
+                        jump = true;
+                        angle.x = FastMath.PI / 4.0f;
+                        float mass = b2Body_GetMass(bodyId);
+                        b2Body_ApplyForceToCenter(bodyId, b2Vec2.calloc(arena).set(0.0f, 750.0f * mass), true);
+                    }
+                }
             }
 
             b2WorldTransform transform = b2Body_GetTransform(bodyId, b2WorldTransform.calloc(arena));
@@ -224,6 +241,7 @@ public class Player extends RigidBody2D {
         geom.setQueueBucket(RenderQueue.Bucket.Transparent);
 
         Player player = new Player(app);
+        player.setType(isDynamic ? b2_dynamicBody : b2_staticBody);
         physicsSpace.addBody(player);
 
         if (isDynamic) {

@@ -5,15 +5,24 @@
 package e.g.tappyplane.screen;
 
 import com.jme3.app.Application;
-import com.jme3.math.Vector3f;
+import com.jme3.collision.CollisionResults;
+import com.jme3.input.InputManager;
+import com.jme3.input.MouseInput;
+import com.jme3.math.Ray;
+import com.jme3.math.Vector2f;
+import com.jme3.renderer.Camera;
+import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import e.g.tappyplane.TappyPlane;
 import e.g.tappyplane.game.Ground;
 import e.g.tappyplane.game.Player;
 import e.g.tappyplane.game.Smoke;
 import e.g.tappyplane.game.Terrain;
+import e.g.tappyplane.game.anim.TapAnimation;
 import e.g.tappyplane.game.enums.GroundType;
+import org.je3gl.plugins.input.BooleanStateMouseInputHandler;
 import org.je3gl.plugins.input.InputHandlerAppState;
+import org.je3gl.plugins.input.MouseButton;
 import org.je3gl.renderer.Camera2DAppSate;
 
 /**
@@ -24,7 +33,9 @@ import org.je3gl.renderer.Camera2DAppSate;
  * @since 1.1.0
  */
 public class GameSceneAppState extends AbstractScreen {
-
+    
+    public static final Geometry NULL_TARGET = new Geometry();
+    
     private Camera2DAppSate camera2D;
     
     /** Root node for this state. */
@@ -44,23 +55,31 @@ public class GameSceneAppState extends AbstractScreen {
     protected void initialize(Application app) {
         super.initialize(app);
         TappyPlane application = (TappyPlane) app;
-
+        
         //----------------------------------------------------------------------
         //                              SCENE
         //----------------------------------------------------------------------
         rootNode = new Node("MyRootNode");
         application.getRootNode().attachChild(rootNode);
-        
+
         //----------------------------------------------------------------------
         //                              SCENE
         //----------------------------------------------------------------------
         InputHandlerAppState handlerAppState = getState(InputHandlerAppState.class);
-        handlerAppState.addInputHandler(Player.VK_JUMP).install();
         handlerAppState.addInputHandler(Player.VM_JUMP).install();
         
         camera2D = getState(Camera2DAppSate.class);
+        setEnabled(false);
     }
-    
+
+    public void setPlayer(Player player) {
+        this.player = player;
+    }
+
+    public void setTerrain(Terrain terrain) {
+        this.terrain = terrain;
+    }
+
     public void gameOver() {
         
     }
@@ -73,13 +92,24 @@ public class GameSceneAppState extends AbstractScreen {
         super.onEnable();
         TappyPlane app = (TappyPlane) getApplication();
 
-        player = Player.getNewInstancePlayer(app, true);
-//        player.setEnabled(false);
+        if (player == null) {
+            player = Player.getNewInstancePlayer(app, true);
+            camera2D.setTarget(player.getJmeObject());
+        }
+        if (terrain == null) {
+            terrain = Terrain.getNewInstanceTerrain(app);
+        }
+        
+        player.setEnabled(true);
         rootNode.attachChild(player.getJmeObject());
-        camera2D.setTarget(player.getJmeObject());
-
-        terrain = Terrain.getNewInstanceTerrain(app);
-//        terrain.setEnabled(false);
+        
+        terrain.setEnabled(true);
         rootNode.attachChild(terrain.getSpatial());
+    }
+
+    @Override
+    protected void onDisable() {
+        super.onDisable();
+        rootNode.detachAllChildren();
     }
 }

@@ -15,6 +15,7 @@ import com.jme3.scene.control.AbstractControl;
 import e.g.tappyplane.TappyPlane;
 import e.g.tappyplane.game.enums.GroundType;
 
+import org.je3gl.box2d.control.PhysicsBody2D;
 import org.je3gl.scene.shape.Sprite;
 import org.je3gl.util.Timer;
 import org.je3gl.util.TimerTask;
@@ -123,14 +124,29 @@ public final class Terrain extends AbstractControl {
      */
     private void addNexGround() {
         Node rootNode = (Node) spatial;
-        Spatial last = rootNode.getChildren().getLast();
+        if (rootNode.getQuantity() == 0) {
+            return;
+        }
 
+        Spatial last = rootNode.getChildren().getLast();
         Ground ground = Ground.getNewInstanceGround(applicatio, currentGroundType, minAmountGround);
         Vector3f pos  = ground.getPosition();
         Sprite sprite = ground.getSprite();
 
         ground.setPosition(new Vector2f(last.getControl(Ground.class).getPosition().x + sprite.getWidth(), pos.y));
         rootNode.attachChild(ground.getJmeObject());
+    }
+
+    /**
+     * Release all the resources that this physical body uses.
+     */
+    public void queueFree() {
+        Node rootNode = (Node) spatial;
+        for (Spatial child : rootNode.getChildren()) {
+            if (child.getControl(PhysicsBody2D.class) != null) {
+                child.getControl(PhysicsBody2D.class).queueFree();
+            }
+        }
     }
 
     /**

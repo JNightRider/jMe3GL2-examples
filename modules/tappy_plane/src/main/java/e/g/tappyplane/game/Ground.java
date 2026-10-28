@@ -30,6 +30,7 @@ import static org.box2d.jni.system.ArenaAlloc.*;
 import org.je3gl.box2d.Box2dAppState;
 import org.je3gl.box2d.PhysicsSpace;
 import org.je3gl.box2d.control.KinematicBody2D;
+import org.je3gl.box2d.control.PhysicsBody2D;
 import org.je3gl.scene.shape.Sprite;
 import static org.je3gl.utilities.MaterialUtilities.*;
 
@@ -97,6 +98,13 @@ public final class Ground extends KinematicBody2D {
             physicsSpace.enqueue(() -> {
                 physicsSpace.removeBody(this);
             });
+            for (Spatial child : ((Node) spatial).getChildren()) {
+                if (child.getControl(PhysicsBody2D.class) != null) {
+                    physicsSpace.enqueue(() -> {
+                        child.getControl(PhysicsBody2D.class).queueFree();
+                    });
+                }
+            }
         }
     }
 

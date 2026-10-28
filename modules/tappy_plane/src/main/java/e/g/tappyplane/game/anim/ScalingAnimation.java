@@ -36,16 +36,39 @@ public final class ScalingAnimation extends AbstractControl {
      * will decrease down to the value of {@link #VF_50}.
      */
     private boolean increment = true;
+    /** Minimum and maximum scale. */
+    private Vector3f minScale, maxScale;
 
     /** Sprite size scale. */
     private final Vector3f scale = new Vector3f(VF_50);
     /** Scaling animation speed. */
-    private final float speed = 3.5f;
+    private float speed = 3.5f * 0.6f;
 
     /**
      * Constructor.
      */
     public ScalingAnimation() {
+        this(VF_50, VF_100);
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param minScale Vector3f
+     * @param maxScale Vector3f
+     */
+    public ScalingAnimation(Vector3f minScale, Vector3f maxScale) {
+        this.minScale = minScale;
+        this.maxScale = maxScale;
+    }
+
+    /**
+     * Sets the animation speed
+     *
+     * @param speed float
+     */
+    public void setSpeed(float speed) {
+        this.speed = speed;
     }
 
     /**
@@ -56,16 +79,17 @@ public final class ScalingAnimation extends AbstractControl {
     @Override
     protected void controlUpdate(float tpf) {
         if (increment) {
-            scale.interpolateLocal(VF_100, tpf * speed * 0.6f);
-            if (scale.isSimilar(VF_100, 0.1f)) {
+            scale.interpolateLocal(maxScale, tpf * speed);
+            if (scale.isSimilar(maxScale, 0.1f)) {
                 increment = false;
             }
         } else {
-            scale.interpolateLocal(VF_50, tpf * speed * 0.6f);
-            if (scale.isSimilar(VF_50, 0.1f)) {
+            scale.interpolateLocal(minScale, tpf * speed);
+            if (scale.isSimilar(minScale, 0.1f)) {
                 increment = true;
             }
         }
+        spatial.setLocalScale(scale);
     }
 
     /**
@@ -76,6 +100,6 @@ public final class ScalingAnimation extends AbstractControl {
      */
     @Override
     protected void controlRender(RenderManager rm, ViewPort vp) {
-        spatial.setLocalScale(scale);
-    }    
+
+    }
 }
