@@ -32,6 +32,8 @@ public class GameSceneAppState extends AbstractScreen {
 
     /** Player body. */
     private Player player;
+    
+    private Terrain terrain;
 
     /**
      * Initializes the screen properties.
@@ -59,7 +61,9 @@ public class GameSceneAppState extends AbstractScreen {
         camera2D = getState(Camera2DAppSate.class);
     }
     
-    
+    public void gameOver() {
+        
+    }
 
     /**
      * Start with the game screen
@@ -70,10 +74,12 @@ public class GameSceneAppState extends AbstractScreen {
         TappyPlane app = (TappyPlane) getApplication();
 
         player = Player.getNewInstancePlayer(app, true);
+//        player.setEnabled(false);
         rootNode.attachChild(player.getJmeObject());
         camera2D.setTarget(player.getJmeObject());
 
-        Terrain terrain = Terrain.getNewInstanceTerrain(app);
+        terrain = Terrain.getNewInstanceTerrain(app);
+//        terrain.setEnabled(false);
         rootNode.attachChild(terrain.getSpatial());
     }
 }

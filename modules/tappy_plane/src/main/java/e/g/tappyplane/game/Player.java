@@ -15,6 +15,7 @@ import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
 import e.g.tappyplane.TappyPlane;
 import e.g.tappyplane.math.Vector1f;
+import e.g.tappyplane.screen.GameSceneAppState;
 
 import org.box2d.jni.*;
 import org.box2d.jni.system.*;
@@ -59,23 +60,23 @@ public class Player extends RigidBody2D {
             new Key(KeyInput.KEY_UP, "KEY_JUMP0")
     );
 
-    /** Main application. */
+    /**  Main application. */
     private final TappyPlane app;
-    
+
     private final Timer timer;
-    
+
     private final Vector1f angle;
-    
+
     private boolean jump;
-    
+
     private final float speedRot = 8.0f;
     private float speeedAnimation = 0.6f;
 
-    private Vector1f linearVelocity = new Vector1f(1.5f);
-    private Vector1f currentLinearVelcity = new Vector1f(1.5f);
-    
+    private final Vector1f linearVelocity = new Vector1f(1.5f);
+    private final Vector1f currentLinearVelcity = new Vector1f(1.5f);
+
     private b2ShapeId shapeId;
-    
+
     public Player(TappyPlane app) {
         this.angle = new Vector1f();
         this.timer = new Timer(2.5f);
@@ -103,7 +104,18 @@ public class Player extends RigidBody2D {
         timer.addTask(onTimerTask);
         timer.start();
     }
-    
+
+    @Override
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+        spatial.getControl(AnimatedSingleSprite2D.class)
+               .setEnabled(enabled);
+        if (enabled) {
+            b2Body_Enable(bodyId);
+        } else {
+            b2Body_Disable(bodyId);
+        }
+    }
 
     @Override
     protected void physicsProcess(float delta) {
@@ -125,7 +137,6 @@ public class Player extends RigidBody2D {
             velocity.x(currentLinearVelcity.x);
             b2Body_SetLinearVelocity(bodyId, velocity);
 
-            
             if (VK_JUMP.isActiveButNotHandled() || VM_JUMP.isActiveButNotHandled()) {
                 VK_JUMP.setHasBeenHandled(true);
                 VM_JUMP.setHasBeenHandled(true);
@@ -173,6 +184,9 @@ public class Player extends RigidBody2D {
             physicsSpace.enqueue(() -> {
                 physicsSpace.removeBody(this);
             });
+            app.getStateManager()
+               .getState(GameSceneAppState.class)
+               .gameOver();
         }
     }
 
@@ -181,14 +195,14 @@ public class Player extends RigidBody2D {
      *
      * @param app main application
      * @param isDynamic {@code true} if the character is playable, {@code false}
-     *                  if static (non-playable)
+     * if static (non-playable)
      * @return Player
      */
     public static Player getNewInstancePlayer(TappyPlane app, boolean isDynamic) {
         AssetManager assetManager = app.getAssetManager();
         PhysicsSpace physicsSpace = app.getStateManager()
-                                        .getState(Box2dAppState.class)
-                                        .getPhysicsSpace();
+                .getState(Box2dAppState.class)
+                .getPhysicsSpace();
 
         Material mat = getUnshadedMaterialFromClassPath(assetManager, "Textures/planes.png");
         mat.setFloat("AlphaDiscardThreshold", 0.1F);
@@ -217,7 +231,7 @@ public class Player extends RigidBody2D {
                 b2ShapeDef shapeDef = b2DefaultShapeDef(b2ShapeDef.calloc(arena));
                 shapeDef.density(1.0f);
                 shapeDef.material().friction(0.3f);
-                
+
                 b2Capsule capsule = b2Capsule.calloc(arena);
                 capsule.center1().set(-0.25f, 0f);
                 capsule.center2().set(0.25f, 0f);
