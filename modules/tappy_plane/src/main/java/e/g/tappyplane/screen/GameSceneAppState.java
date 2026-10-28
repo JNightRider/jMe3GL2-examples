@@ -16,6 +16,7 @@ import com.jme3.renderer.Camera;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
+import com.jme3.scene.Spatial;
 import com.jme3.util.functional.VoidFunction;
 import com.simsilica.lemur.Label;
 import e.g.jme3hudl.ControlLayout;
@@ -24,15 +25,23 @@ import e.g.tappyplane.game.Ground;
 import e.g.tappyplane.game.Player;
 import e.g.tappyplane.game.Smoke;
 import e.g.tappyplane.game.Terrain;
+import e.g.tappyplane.game.anim.Effects;
 import e.g.tappyplane.game.anim.TapAnimation;
 import e.g.tappyplane.game.enums.GroundType;
 import e.g.tappyplane.ui.TimerMessage;
 import javax.sound.midi.VoiceStatus;
+import org.je3gl.listener.AnimationChangeListener;
+import org.je3gl.listener.AnimationEvent;
 import org.je3gl.plugins.input.BooleanStateMouseInputHandler;
 import org.je3gl.plugins.input.InputHandlerAppState;
 import org.je3gl.plugins.input.MouseButton;
 import org.je3gl.renderer.Camera2DAppSate;
+import org.je3gl.scene.control.AnimatedSprite2D;
+import org.je3gl.scene.control.SpriteAnimation2D;
 import org.je3gl.scene.shape.Sprite;
+import org.je3gl.util.Timer;
+import org.je3gl.util.TimerAppState;
+import org.je3gl.util.TimerTask;
 import org.je3gl.utilities.MaterialUtilities;
 
 /**
@@ -59,6 +68,8 @@ public class GameSceneAppState extends AbstractScreen {
     private TimerMessage timerMessage;
     
     private Geometry gameoverMessage;
+    
+    private Timer timer;
 
     /**
      * Initializes the screen properties.
@@ -92,9 +103,9 @@ public class GameSceneAppState extends AbstractScreen {
         gameoverMessage.setMaterial(mat);
         gameoverMessage.setQueueBucket(RenderQueue.Bucket.Transparent);
 
-        //----------------------------------------------------------------------
-        //                              SCENE
-        //----------------------------------------------------------------------
+        TimerAppState timerAppState = getState(TimerAppState.class);
+        timer = timerAppState.attachTimer("TimerExit", new Timer(0.25f).attachTask(timerTaskExit), 0.6f);
+        
         InputHandlerAppState handlerAppState = getState(InputHandlerAppState.class);
         handlerAppState.addInputHandler(Player.VM_JUMP).install();
         
@@ -102,11 +113,31 @@ public class GameSceneAppState extends AbstractScreen {
         setEnabled(false);
     }
     
+    private final AnimationChangeListener<Spatial, SpriteAnimation2D, AnimatedSprite2D>  changeListener = new AnimationChangeListener<Spatial, SpriteAnimation2D, AnimatedSprite2D>() {
+        @Override
+        public void beforeAnimation2DChange(AnimationEvent<Spatial, SpriteAnimation2D, AnimatedSprite2D> event) {
+            
+        }
+
+        @Override
+        public void afterAnimation2DChange(AnimationEvent<Spatial, SpriteAnimation2D, AnimatedSprite2D> event) {
+            if (event.getFrame() == 8) {
+                timer.start();
+            }
+        }
+    };
+    
+    private final TimerTask timerTaskExit = (t) -> {
+        setEnabled(false);
+        getState(MainSceneAppState.class).setEnabled(true);
+        t.stop();
+    };
+    
     private final VoidFunction<Void> startGame = (t) -> {
         player.setEnabled(true);
         terrain.setEnabled(true);
     };
-
+    
     public void setPlayer(Player player) {
         this.player = player;
     }
@@ -116,13 +147,19 @@ public class GameSceneAppState extends AbstractScreen {
     }
 
     public void gameOver(Vector3f position) {
-        float offset = 0;
+        float offset;
         if (position.y >= getApplication().getCamera().getFrustumTop()) {
-            offset -= 1;
+            offset = -1;
+        } else {
+            offset = 1;
         }
         
-        gameoverMessage.setLocalTranslation(position.x, position.y + offset, 1);
+        gameoverMessage.setLocalTranslation(position.x, position.y + offset, 2);
         rootNode.attachChild(gameoverMessage);
+        
+        Spatial explosion = Effects.getNewInstaceExplosion((TappyPlane) getApplication(), changeListener);
+        explosion.setLocalTranslation(position.x, position.y, 1f);
+        rootNode.attachChild(explosion);
     }
 
     /**
