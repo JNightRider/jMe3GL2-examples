@@ -73,7 +73,7 @@ public class TappyPlane extends SimpleApplication {
     @Override
     public void simpleInitApp() {
         // The physical state is initialized.
-        Box2dAppState box2dAppState = new Box2dAppState(ThreadingType.SEQUENTIAL);
+        Box2dAppState box2dAppState = new Box2dAppState(ThreadingType.PARALLEL);
         box2dAppState.setDebugEnabled(true);
         stateManager.attach(box2dAppState);
 

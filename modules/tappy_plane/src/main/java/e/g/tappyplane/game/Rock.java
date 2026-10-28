@@ -38,6 +38,8 @@ import static org.je3gl.utilities.MaterialUtilities.*;
  * @since 1.1.0
  */
 public final class Rock extends KinematicBody2D {
+    /** Name */
+    public static final String NAME = "Rock";
 
     /** The world's camera.  */
     private final Camera camera;
@@ -109,7 +111,7 @@ public final class Rock extends KinematicBody2D {
 
         Sprite sprite = new Sprite(1.0f, h / w);
         sprite.applyScale(2.0f);
-        Geometry geom = new Geometry("Rock", sprite);
+        Geometry geom = new Geometry(NAME, sprite);
         geom.setMaterial(mat);
         geom.setQueueBucket(RenderQueue.Bucket.Transparent);
 
@@ -123,14 +125,14 @@ public final class Rock extends KinematicBody2D {
             b2ShapeDef shapeDef = b2DefaultShapeDef(b2ShapeDef.calloc(arena));
 
             b2Vec2.Buffer vertices = b2Vec2.calloc(3, arena);
-            if (isDown) {
+            if (!isDown) {
                 vertices.get(0).set(-w / 2f, -h / 2f);
                 vertices.get(1).set(w / 2f, -h / 2f);
-                vertices.get(2).set(-0.25f, h / 2f);
+                vertices.get(2).set(0.25f, h / 2f);
             } else {
                 vertices.get(0).set(w / 2f, h / 2f);
                 vertices.get(1).set(-w / 2f, h / 2f);
-                vertices.get(2).set(-0.25f, -h / 2f);
+                vertices.get(2).set(0.25f, -h / 2f);
             }
 
             b2Hull hull = b2ComputeHull(vertices, 3, b2Hull.calloc(arena));

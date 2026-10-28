@@ -32,7 +32,27 @@ public enum GroundType {
 
     /** The type of rock that this ground might contain. */
     private final RockType rockType;
-    
+
+    /**
+     * Verifies and returns the next type, in relation to the current type.
+     *
+     * @param type current type
+     * @return next type
+     */
+    public static GroundType checkNextOf(GroundType type) {
+        switch (type) {
+            case GRASS:
+                return DIRT;
+            case DIRT:
+                return SNOW;
+            case SNOW:
+                return ICE;
+            case ICE:
+            default:
+                return ROCK;
+        }
+    }
+
     /**
      * Constructor
      *

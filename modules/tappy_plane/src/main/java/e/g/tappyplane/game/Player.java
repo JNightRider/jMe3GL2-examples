@@ -37,6 +37,8 @@ import org.je3gl.plugins.input.Key;
 import org.je3gl.plugins.input.MouseButton;
 import org.je3gl.scene.control.AnimatedSingleSprite2D;
 import org.je3gl.scene.shape.Sprite;
+import org.je3gl.util.Timer;
+import org.je3gl.util.TimerTask;
 import static org.je3gl.utilities.MaterialUtilities.*;
 
 /**
@@ -60,39 +62,72 @@ public class Player extends RigidBody2D {
     /** Main application. */
     private final TappyPlane app;
     
+    private final Timer timer;
+    
     private final Vector1f angle;
     
     private boolean jump;
     
     private final float speedRot = 8.0f;
+    private float speeedAnimation = 0.6f;
 
+    private Vector1f linearVelocity = new Vector1f(1.5f);
+    private Vector1f currentLinearVelcity = new Vector1f(1.5f);
+    
+    private b2ShapeId shapeId;
+    
     public Player(TappyPlane app) {
         this.angle = new Vector1f();
+        this.timer = new Timer(2.5f);
         this.app = app;
     }
 
     @Override
+    public b2ShapeId addCapsuleShape(b2ShapeDef shapeDef, b2Capsule shape) {
+        shapeId = super.addCapsuleShape(shapeDef, shape);
+        return shapeId;
+    }
+    
+    
+    
+    private final TimerTask onTimerTask = (t) -> {
+        linearVelocity.x += 0.5f;
+        speeedAnimation += 0.025f;
+        t.reset();
+    };
+
+    @Override
     protected void ready() {
         try (ArenaAlloc arena = allocPush()) {
-            b2Body_SetLinearVelocity(bodyId, b2Vec2.calloc(arena).set(1.5f, 0.0f));
+            b2Body_SetLinearVelocity(bodyId, b2Vec2.calloc(arena).set(currentLinearVelcity.x, 0.0f));
             b2Body_EnableContactEvents(bodyId, true);
         }
+        timer.addTask(onTimerTask);
+        timer.start();
     }
     
 
     @Override
     protected void physicsProcess(float delta) {
+        timer.update(delta, 0.6f);
         angle.interpolateLocal(Vector1f.ZERO, delta * 0.6f * speedRot);
         if (jump) {
             jump = false;
             smoke();
         }
+        spatial.getControl(AnimatedSingleSprite2D.class).setAnimationSpeed(speeedAnimation);
         checkContactEvents();
     }
 
     @Override
     protected void physicsParallel(float delta) {
+        currentLinearVelcity.interpolateLocal(linearVelocity, delta * 0.6f);
         try (ArenaAlloc arena = allocPush()) {
+            b2Vec2 velocity = b2Body_GetLinearVelocity(bodyId, b2Vec2.calloc(arena));
+            velocity.x(currentLinearVelcity.x);
+            b2Body_SetLinearVelocity(bodyId, velocity);
+
+            
             if (VK_JUMP.isActiveButNotHandled() || VM_JUMP.isActiveButNotHandled()) {
                 VK_JUMP.setHasBeenHandled(true);
                 VM_JUMP.setHasBeenHandled(true);
@@ -119,9 +154,7 @@ public class Player extends RigidBody2D {
                 b2ShapeId bodyA = event.shapeIdA();
                 b2ShapeId bodyB = event.shapeIdB();
 
-                if (B2_ID_EQUALS(bodyA, bodyId)) {
-                    queueFree();
-                } else if (B2_ID_EQUALS(bodyB, bodyId)) {
+                if (B2_ID_EQUALS(bodyA, shapeId) || B2_ID_EQUALS(bodyB, shapeId)) {
                     queueFree();
                 }
             }
@@ -137,6 +170,7 @@ public class Player extends RigidBody2D {
 
     @Override
     public void queueFree() {
+        timer.stop();
         if (spatial.removeFromParent()) {
             physicsSpace.enqueue(() -> {
                 physicsSpace.removeBody(this);
@@ -163,7 +197,7 @@ public class Player extends RigidBody2D {
         mat.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
 
         Sprite sprite = new Sprite(1.3f, 1.0f, 3, 1, 0, 0);
-        sprite.applyScale(2.0f);
+        sprite.applyScale(1.5f);
         Geometry geom = new Geometry("Player", sprite);
 
         // Add the following animations.
@@ -183,9 +217,14 @@ public class Player extends RigidBody2D {
         if (isDynamic) {
             try (ArenaAlloc arena = allocPush()) {
                 b2ShapeDef shapeDef = b2DefaultShapeDef(b2ShapeDef.calloc(arena));
-                b2Circle circle = b2Circle.calloc(arena);
-                circle.radius(0.5f);
-                player.addCircleShape(shapeDef, circle);
+                shapeDef.density(1.0f);
+                shapeDef.material().friction(0.3f);
+                
+                b2Capsule capsule = b2Capsule.calloc(arena);
+                capsule.center1().set(-0.25f, 0f);
+                capsule.center2().set(0.25f, 0f);
+                capsule.radius(0.5f);
+                player.addCapsuleShape(shapeDef, capsule);
             }
         }
 

@@ -12,6 +12,7 @@ import com.jme3.renderer.Camera;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
+import com.jme3.scene.Spatial;
 
 import e.g.tappyplane.TappyPlane;
 import e.g.tappyplane.game.enums.GroundType;
@@ -21,14 +22,14 @@ import java.util.concurrent.ThreadLocalRandom;
 import org.box2d.jni.*;
 import org.box2d.jni.system.*;
 
-import static org.box2d.jni.include.Box2d.*;
+import static org.box2d.jni.include.Collision.*;
+import static org.box2d.jni.include.MathTypes.b2Rot_identity;
 import static org.box2d.jni.include.Types.*;
 import static org.box2d.jni.system.ArenaAlloc.*;
 
 import org.je3gl.box2d.Box2dAppState;
 import org.je3gl.box2d.PhysicsSpace;
 import org.je3gl.box2d.control.KinematicBody2D;
-import org.je3gl.box2d.util.ParsePath;
 import org.je3gl.scene.shape.Sprite;
 import static org.je3gl.utilities.MaterialUtilities.*;
 
@@ -81,7 +82,7 @@ public final class Ground extends KinematicBody2D {
         Vector3f position = getPosition();
         Vector3f location = camera.getLocation();
 
-        Sprite sprite = (Sprite) ((Geometry) ((Node) spatial).getChild("Ground")).getMesh();
+        Sprite sprite = getSprite();
         if ((position.x + sprite.getWidth() / 2.0f) < (location.x + camera.getFrustumLeft())) {
             queueFree();
         }
@@ -97,6 +98,37 @@ public final class Ground extends KinematicBody2D {
                 physicsSpace.removeBody(this);
             });
         }
+    }
+
+    /**
+     * (non-Javadoc)
+     * @param position Vector2f
+     */
+    @Override
+    public void setPosition(Vector2f position) {
+        super.setPosition(position);
+        Node node = getJmeObject();
+        if (node == null) {
+            return;
+        }
+
+        for (Spatial child : node.getChildren()) {
+            if (Rock.NAME.equals(child.getName())) {
+                Rock rock = child.getControl(Rock.class);
+                Vector3f location = rock.getPosition();
+
+                rock.setPosition(new Vector2f(position.x + location.x, location.y));
+            }
+        }
+    }
+
+    /**
+     * Returns the mesh of this body.
+     *
+     * @return Sprite
+     */
+    public Sprite getSprite() {
+        return (Sprite) ((Geometry) ((Node) spatial).getChild("Ground")).getMesh();
     }
 
     /**
@@ -157,41 +189,19 @@ public final class Ground extends KinematicBody2D {
         ground.setPosition(new Vector2f(0, app.getCamera().getFrustumBottom() + (sprite.getHeight() / 2.0f)));
         physicsSpace.addBody(ground);
         try (ArenaAlloc arena = allocPush()) {
-            String path = """
-                    M 0.001418,1.989986
-                    L 0.000000,0.987124
-                    L 0.934538,0.924178
-                    L 1.152496,1.145922
-                    L 2.522948,1.250358
-                    L 3.739546,0.924178
-                    L 4.370086,0.207440
-                    L 6.916388,0.092990
-                    L 8.583166,0.742490
-                    L 9.719978,0.745350
-                    L 10.400940,0.324750
-                    L 12.154612,0.323320
-                    L 13.094842,1.226038
-                    L 14.163300,1.220314
-                    L 14.864198,1.513590
-                    L 15.919808,1.519314
-                    L 16.654906,0.748212
-                    L 17.705240,0.653792
-                    L 18.317408,0.082976
-                    L 20.703600,0.000000
-                    L 21.254918,0.712446
-                    L 22.497142,0.998570
-                    L 22.500000,2.000000
-                    """;
-
-            b2Vec2.Buffer points = b2Vec2.calloc(64, arena);
-            b2Vec2 offset = b2Vec2.calloc(arena).set(-sprite.getWidth() / 2.0f, -sprite.getHeight() / 2.0f);
-            int count = ParsePath.parse(path, offset, points, 64, 1.0f, false);
-
-            b2ChainDef chainDef = b2DefaultChainDef(b2ChainDef.calloc(arena));
-            chainDef.points(points);
-            chainDef.pointCount(count);
-            chainDef.isLoop(true);
-            b2CreateChain(ground.getBodyId(), chainDef, b2ChainId.calloc(arena));
+            b2ShapeDef shapeDef = b2DefaultShapeDef(b2ShapeDef.calloc(arena));
+            ground.addPolygonShape(
+                shapeDef,
+                b2MakeOffsetBox(sprite.getWidth() / 2f, 0.5f, b2Vec2.calloc(arena).set(0, -0.5f), b2Rot_identity, b2Polygon.calloc(arena))
+            );            
+            ground.addPolygonShape(
+                shapeDef,
+                b2MakeOffsetBox(sprite.getWidth() / 5f, 0.5f, b2Vec2.calloc(arena).set(-3f, 0.5f), b2Rot_identity, b2Polygon.calloc(arena))
+            );            
+            ground.addPolygonShape(
+                shapeDef,
+                b2MakeOffsetBox(2, 0.5f, b2Vec2.calloc(arena).set(8f, 0.5f), b2Rot_identity, b2Polygon.calloc(arena))
+            );
         }
         rootNode.addControl(ground);
         rootNode.attachChild(geom);
@@ -217,20 +227,43 @@ public final class Ground extends KinematicBody2D {
         float xInit = -maxWidth / 2.0f,
               yInit = isDown ? myGround.getApp().getCamera().getFrustumTop() : myGround.getPosition().y;
 
+        int[] cache = new int[myGround.getRockCount()];
         for (int i = 0; i < myGround.getRockCount(); i++) {
             Rock rock = Rock.getNewInstanceRock(myGround.getApp(), myGround.getType().getRockType(), isDown);
             Sprite sprite = rock.getSprite();
 
-            float w = sprite.getWidth();
             float offsetY = yInit;
-            int randomPos = random.nextInt(1, 10);
-
             if (isDown) {
                 offsetY -= sprite.getHeight() / 2.0f - 1;
             }
-
-            rock.setPosition(new Vector2f(xInit + w * randomPos, offsetY + random.nextFloat(-0.15f, 1.0f)));
-            rootNode.attachChildAt(rock.getJmeObject(), 0);
+            offsetY += random.nextFloat(-0.2f, 1.15f);
+            
+            if (!isDown && i == 0) {
+                rock.setPosition(new Vector2f(xInit, offsetY));
+                rootNode.attachChild(rock.getJmeObject());
+            } else {
+                int idx = nexrRandPos(cache);
+                cache[i] = idx;
+                rock.setPosition(new Vector2f(xInit + (sprite.getWidth() * idx), offsetY + random.nextFloat(-0.15f, 1.0f)));
+                rootNode.attachChildAt(rock.getJmeObject(), 0);
+            }
         }
+    }
+
+    /**
+     * Find the next position randomly.
+     *
+     * @param cache occupied positions.
+     * @return position (index)
+     */
+    private static int nexrRandPos(int[] cache) {
+        ThreadLocalRandom random = ThreadLocalRandom.current();
+        int rand = random.nextInt(1, 10);
+        for (int i : cache) {
+            if (i == rand) {
+                rand++;
+            }
+        }
+        return rand;
     }
 }
