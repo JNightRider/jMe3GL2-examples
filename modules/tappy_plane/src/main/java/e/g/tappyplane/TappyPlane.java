@@ -11,6 +11,8 @@ import com.jme3.math.Vector3f;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.system.AppSettings;
 
+import com.simsilica.lemur.GuiGlobals;
+
 import e.g.tappyplane.screen.GameSceneAppState;
 import e.g.tappyplane.screen.MainSceneAppState;
 
@@ -50,7 +52,7 @@ public class TappyPlane extends SimpleApplication {
         settings.setResolution(1024, 576);
 
         // Get the resolution of the user's current screen.
-        boolean isFullScreen = false;
+        boolean isFullScreen = true;
         Jme3GL2DisplaySystem displaySystem = Jme3GL2DefaultDisplaySystem.getDisplaySystem();
         JAWTResolution resolution = isFullScreen 
                 ? displaySystem.getFullScreenResolution()
@@ -73,6 +75,17 @@ public class TappyPlane extends SimpleApplication {
      */
     @Override
     public void simpleInitApp() {
+        setDisplayFps(false);
+        setDisplayStatView(false);
+
+        // Initialize the globals access so that the default
+        // components can find what they need.
+        GuiGlobals.initialize(this);
+
+        // Set 'glass' as the default style when not specified
+        GuiGlobals.getInstance().getStyles().setDefaultStyle("glass");
+        LemurGuiStyle.loadAppStyle(assetManager);
+
         // The physical state is initialized.
         Box2dAppState box2dAppState = new Box2dAppState(ThreadingType.PARALLEL);
         box2dAppState.setDebugEnabled(true);
@@ -105,5 +118,14 @@ public class TappyPlane extends SimpleApplication {
 
         // set the background color. [0.835f, 0.929f, 0.969f, 1.0f]
         viewPort.setBackgroundColor(new ColorRGBA(1.0f, 1.0f, 1.0f, 1.0f));
+    }
+
+    /**
+     * Returns the application settings.
+     *
+     * @return AppSettings
+     */
+    public AppSettings getSettings() {
+        return settings;
     }
 }
