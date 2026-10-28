@@ -8,12 +8,10 @@ import com.jme3.app.Application;
 import com.jme3.collision.CollisionResults;
 import com.jme3.input.InputManager;
 import com.jme3.input.MouseInput;
-import com.jme3.material.Material;
 import com.jme3.math.Ray;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
-import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.simsilica.lemur.GuiGlobals;
@@ -24,15 +22,10 @@ import e.g.tappyplane.TappyPlane;
 import e.g.tappyplane.game.Player;
 import e.g.tappyplane.game.Terrain;
 import e.g.tappyplane.game.anim.TapAnimation;
-import e.g.tappyplane.ui.TimerMessage;
-import e.g.tappyplane.ui.UILetters;
-import e.g.tappyplane.ui.UINumber;
 import org.je3gl.plugins.input.BooleanStateMouseInputHandler;
 import org.je3gl.plugins.input.InputHandlerAppState;
 import org.je3gl.plugins.input.MouseButton;
 import org.je3gl.renderer.Camera2DAppSate;
-import org.je3gl.scene.shape.Sprite;
-import org.je3gl.utilities.MaterialUtilities;
 
 
 /**
@@ -93,9 +86,6 @@ public class MainSceneAppState extends AbstractScreen {
         tap.getSpatial().move(-1, 0, 0);
         tap.setVisible(false);
 
-        //----------------------------------------------------------------------
-        //                              SCENE
-        //----------------------------------------------------------------------
         InputHandlerAppState handlerAppState = getState(InputHandlerAppState.class);
         handlerAppState.addInputHandler(START).install();        
         camera2D = getState(Camera2DAppSate.class);
@@ -129,10 +119,6 @@ public class MainSceneAppState extends AbstractScreen {
                 }
             }
         }
-    }
-
-    public void gameOver() {
-        
     }
 
     /**

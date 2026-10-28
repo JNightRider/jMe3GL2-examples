@@ -109,6 +109,13 @@ public final class Background extends AbstractControl {
     private final Camera camera;
 
     /**
+     * If the value is {@code true}, the scene background will move along with
+     * the camera, as it remains static; otherwise, it will create a dynamic
+     * animation effect.
+     */
+    private boolean isStatic = false;
+
+    /**
      * Rotating index that manages the positions of each fragment
      * ({@link Panel}) in the scene background.
      */
@@ -121,6 +128,20 @@ public final class Background extends AbstractControl {
      */
     public Background(Camera camera) {
         this.camera = camera;
+    }
+
+    /**
+     * Set the mode for this background.
+     *
+     * @see #isStatic
+     *
+     * @param isStatic boolean
+     */
+    public void setStatic(boolean isStatic) {
+        for (Panel panel : panels) {
+            panel.setEnabled(!isStatic);
+        }
+        this.isStatic = isStatic;
     }
 
     /**
@@ -155,17 +176,21 @@ public final class Background extends AbstractControl {
      */
     @Override
     protected void controlUpdate(float tpf) {
-        Panel current = panels.get(index);
-        Vector3f position = current.drawable.getLocalTranslation();
         Vector3f location = camera.getLocation();
+        if (isStatic) {
+            spatial.setLocalTranslation(location.x, 0, -1f);
+        } else {
+            Panel current = panels.get(index);
+            Vector3f position = current.drawable.getLocalTranslation();
 
-        float w = current.getSprite().getWidth();
-        if ((position.x + w / 2.0f) < (location.x + camera.getFrustumLeft())) {
-            nextIndex();
+            float w = current.getSprite().getWidth();
+            if ((position.x + w / 2.0f) < (location.x + camera.getFrustumLeft())) {
+                nextIndex();
 
-            Vector3f newPos = current.beforeDrawable.getLocalTranslation();
-            position = new Vector3f(newPos.x + w, location.y, 0f);
-            current.drawable.setLocalTranslation(position);
+                Vector3f newPos = current.beforeDrawable.getLocalTranslation();
+                position = new Vector3f(newPos.x + w, location.y, 0f);
+                current.drawable.setLocalTranslation(position);
+            }
         }
     }
 
