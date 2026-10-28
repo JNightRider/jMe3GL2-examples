@@ -5,24 +5,40 @@
 package e.g.tappyplane.math;
 
 /**
+ * A class responsible for managing a single direction.
  *
  * @author wil
+ * @version 1.0.0
+ * @since 1.1.0
  */
 public final class Vector1f {
+
     /**
      * Shared instance of the all-zero vector (0,0,0). Do not modify!
      */
     public static final Vector1f ZERO = new Vector1f(0.0f);
-    
+
+    /** value. */
     public float x;
 
+    /** Constructor. */
     public Vector1f() {
     }
 
+    /**
+     * Constructor.
+     *
+     * @param vec Vector1f
+     */
     public Vector1f(Vector1f vec) {
         this(vec.x);
     }
-    
+
+    /**
+     * Constructor.
+     *
+     * @param x float
+     */
     public Vector1f(float x) {
         this.x = x;
     }
