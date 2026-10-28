@@ -93,7 +93,7 @@ public class TappyPlane extends SimpleApplication {
 
         // Set the camera to 2D, with a distance of 5 units.
         Camera2DAppSate camera2DRenderer = new Camera2DAppSate(1.0f);
-        camera2DRenderer.setUnitComparator(Vector3f.UNIT_Z, UnitComparator.UType.World, RenderQueue.Bucket.Transparent);
+        camera2DRenderer.setUnitComparator(Vector3f.UNIT_Z, UnitComparator.UType.World, RenderQueue.Bucket.Transparent, RenderQueue.Bucket.Translucent);
         camera2DRenderer.setOffset(new Vector2f(4.0f, 0f));
         camera2DRenderer.setLimitRect(new Vector2f(Float.MIN_VALUE, 0), new Vector2f(Float.MAX_VALUE, 0));
         stateManager.attach(camera2DRenderer);

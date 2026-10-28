@@ -154,17 +154,6 @@ public class GameSceneAppState extends AbstractScreen {
     @Override
     protected void onEnable() {
         super.onEnable();
-        TappyPlane app = (TappyPlane) getApplication();
-
-        if (player == null) {
-            player = Player.getNewInstancePlayer(app, true);
-            camera2D.setTarget(player.getJmeObject());
-        }
-        if (terrain == null) {
-            terrain = Terrain.getNewInstanceTerrain(app);
-        }
-        
-        
         rootNode.attachChild(player.getJmeObject());
         rootNode.attachChild(terrain.getSpatial());
         timerMessage.start();

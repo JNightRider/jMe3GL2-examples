@@ -8,6 +8,7 @@ import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.RenderManager;
@@ -18,7 +19,10 @@ import com.jme3.scene.control.AbstractControl;
 
 import e.g.tappyplane.TappyPlane;
 import e.g.tappyplane.game.anim.ScalingAnimation;
+import e.g.tappyplane.game.enums.SmokeType;
 import e.g.tappyplane.math.Vector1f;
+
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.je3gl.scene.shape.Sprite;
 import static org.je3gl.utilities.MaterialUtilities.*;
@@ -108,11 +112,16 @@ public final class Smoke extends AbstractControl {
      */
     public static Smoke getNewInstanceSmoke(TappyPlane app, Vector3f position) {
         AssetManager assetManager = app.getAssetManager();
-        Material mat = getUnshadedMaterialFromClassPath(assetManager, "Textures/smoke.png");
+        SmokeType[] types = SmokeType.values();
+        ThreadLocalRandom random = ThreadLocalRandom.current();
+        
+        SmokeType smokeType = types[random.nextInt(0, types.length)];
+        Material mat = getUnshadedMaterialFromClassPath(assetManager, smokeType.getPath());
         mat.setFloat("AlphaDiscardThreshold", 0.1F);
         mat.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
 
-        Sprite sprite = new Sprite(1.2f, 1.0f);
+        Vector2f size = smokeType.getSize();
+        Sprite sprite = new Sprite(size.x, size.y);
         Geometry geom = new Geometry("Player", sprite);
         geom.setMaterial(mat);
         geom.setLocalScale(ScalingAnimation.VF_50);

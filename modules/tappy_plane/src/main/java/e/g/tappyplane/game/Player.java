@@ -179,6 +179,10 @@ public class Player extends RigidBody2D {
     private void checkContactEvents() {
         try (ArenaAlloc arena = allocPush()) {
             b2ContactEvents events = b2World_GetContactEvents(physicsSpace.getWorldId(), b2ContactEvents.calloc(arena));
+            if (events.beginEvents() == NULL) {
+                return;
+            }
+            
             b2ContactBeginTouchEvent.Buffer pointer = new b2ContactBeginTouchEvent.Buffer(events.beginEvents(), events.beginCount());
             for (int i = 0; i < events.beginCount(); ++i) {
                 b2ContactBeginTouchEvent event = pointer.get(i);

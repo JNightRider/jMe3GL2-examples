@@ -49,7 +49,6 @@ public abstract class AbstractScreen extends BaseAppState {
         rootContainer = new Container(new ElementId("null"));
         rootContainer.setPreferredSize(new Vector3f(layout.getRootPane().getResolution().clone()));
         rootContainer.setLayout(layout);
-        background = Background.getNewInstanceBackground(application);
     }
 
     /**
@@ -70,6 +69,7 @@ public abstract class AbstractScreen extends BaseAppState {
     @Override
     protected void onEnable() {
         TappyPlane application = (TappyPlane) getApplication();
+        background = Background.getNewInstanceBackground(application);
         application.getRootNode().attachChild(background.getSpatial());
         application.getGuiNode().attachChild(rootContainer);
 
@@ -85,7 +85,10 @@ public abstract class AbstractScreen extends BaseAppState {
      */
     @Override
     protected void onDisable() {
-        background.getSpatial().removeFromParent();
+        if (background != null) {
+            background.getSpatial()
+                      .removeFromParent();
+        }
         rootContainer.removeFromParent();
     }
 }
