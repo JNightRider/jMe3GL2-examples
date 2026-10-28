@@ -88,7 +88,7 @@ public class TappyPlane extends SimpleApplication {
 
         // The physical state is initialized.
         Box2dAppState box2dAppState = new Box2dAppState(ThreadingType.PARALLEL);
-        box2dAppState.setDebugEnabled(true);
+        box2dAppState.setDebugEnabled(false);
         stateManager.attach(box2dAppState);
 
         // Set the camera to 2D, with a distance of 5 units.

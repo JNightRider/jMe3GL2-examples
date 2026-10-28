@@ -129,6 +129,12 @@ public class Player extends RigidBody2D {
         }
         spatial.getControl(AnimatedSingleSprite2D.class).setAnimationSpeed(speeedAnimation);
         checkContactEvents();
+        
+        float limitY = app.getCamera().getFrustumTop();
+        float myPosY = getPosition().y;
+        if (myPosY > limitY) {
+            queueFree();
+        }
     }
 
     @Override
@@ -203,7 +209,7 @@ public class Player extends RigidBody2D {
             });
             app.getStateManager()
                .getState(GameSceneAppState.class)
-               .gameOver();
+               .gameOver(getPosition());
         }
     }
 

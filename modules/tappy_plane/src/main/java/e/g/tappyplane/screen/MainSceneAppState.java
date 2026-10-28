@@ -8,20 +8,31 @@ import com.jme3.app.Application;
 import com.jme3.collision.CollisionResults;
 import com.jme3.input.InputManager;
 import com.jme3.input.MouseInput;
+import com.jme3.material.Material;
 import com.jme3.math.Ray;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
+import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
+import com.simsilica.lemur.GuiGlobals;
+import com.simsilica.lemur.Label;
+import com.simsilica.lemur.component.QuadBackgroundComponent;
+import e.g.jme3hudl.ControlLayout;
 import e.g.tappyplane.TappyPlane;
 import e.g.tappyplane.game.Player;
 import e.g.tappyplane.game.Terrain;
 import e.g.tappyplane.game.anim.TapAnimation;
+import e.g.tappyplane.ui.TimerMessage;
+import e.g.tappyplane.ui.UILetters;
+import e.g.tappyplane.ui.UINumber;
 import org.je3gl.plugins.input.BooleanStateMouseInputHandler;
 import org.je3gl.plugins.input.InputHandlerAppState;
 import org.je3gl.plugins.input.MouseButton;
 import org.je3gl.renderer.Camera2DAppSate;
+import org.je3gl.scene.shape.Sprite;
+import org.je3gl.utilities.MaterialUtilities;
 
 
 /**
@@ -46,6 +57,8 @@ public class MainSceneAppState extends AbstractScreen {
     private Terrain terrain;
     
     private TapAnimation tap;
+    
+    private Label message;
 
     /**
      * Initializes the screen properties.
@@ -57,7 +70,19 @@ public class MainSceneAppState extends AbstractScreen {
         super.initialize(app);
         TappyPlane application = (TappyPlane) app;
         inputManager = application.getInputManager();
+        //----------------------------------------------------------------------
+        //                              HUD
+        //----------------------------------------------------------------------
+        ControlLayout layout = (ControlLayout) rootContainer.getLayout();
         
+        message = new Label("");
+        message.setPreferredSize(new Vector3f(913 * 0.6f, 166 * 0.6f, 0));
+        message.setBackground(new QuadBackgroundComponent(
+                GuiGlobals.getInstance().loadTexture("Textures/ready.png", true, false)
+        ));
+        layout.addChild(message, ControlLayout.Alignment.CenterTop);
+        layout.setAttribute(ControlLayout.POSITION, message, new Vector3f(0, 80, 0));
+  
         //----------------------------------------------------------------------
         //                              SCENE
         //----------------------------------------------------------------------
