@@ -18,6 +18,7 @@ import com.jme3.renderer.Camera;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 
+import com.simsilica.lemur.Button;
 import com.simsilica.lemur.GuiGlobals;
 import com.simsilica.lemur.Label;
 import com.simsilica.lemur.component.QuadBackgroundComponent;
@@ -87,6 +88,7 @@ public class MainSceneAppState extends AbstractScreen {
         //                              AUDIO
         //----------------------------------------------------------------------
         music = new AudioNode(assetManager.loadAudio("Sounds/main_music.wav"), new AudioKey("Music", true));
+        music.setVolume(0.4f);
         music.setPositional(false);
         music.setDirectional(false);
         music.setLooping(true);
@@ -99,10 +101,24 @@ public class MainSceneAppState extends AbstractScreen {
         message = new Label("");
         message.setPreferredSize(new Vector3f(913 * 0.6f, 166 * 0.6f, 0));
         message.setBackground(new QuadBackgroundComponent(
-                GuiGlobals.getInstance().loadTexture("Textures/ready.png", true, false)
+                GuiGlobals.getInstance()
+                        .loadTexture("Textures/ready.png", true, false)
         ));
         layout.addChild(message, ControlLayout.Alignment.CenterTop);
         layout.setAttribute(ControlLayout.POSITION, message, new Vector3f(0, 90, 0));
+
+        // Exits Button
+        Button exitButton = new Button("");
+        exitButton.setPreferredSize(new Vector3f(260 * 0.25f, 271 * 0.25f, 0));
+        exitButton.setBackground(new QuadBackgroundComponent(
+                GuiGlobals.getInstance()
+                        .loadTexture("Textures/button.png", true, false)
+        ));
+        exitButton.addClickCommands((source) -> {
+            getApplication().stop();
+        });
+        layout.addChild(exitButton, ControlLayout.Alignment.RightTop);
+        layout.setAttribute(ControlLayout.POSITION, exitButton, new Vector3f(20, 10, 0));
 
         //----------------------------------------------------------------------
         //                              SCENE

@@ -75,8 +75,11 @@ public class TappyPlane extends SimpleApplication {
      */
     @Override
     public void simpleInitApp() {
+        // reset and settings application
         setDisplayFps(false);
         setDisplayStatView(false);
+        inputManager.clearMappings();
+        inputManager.reset();
 
         // Initialize the globals access so that the default
         // components can find what they need.
