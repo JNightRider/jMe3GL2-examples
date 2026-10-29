@@ -52,35 +52,63 @@ import static org.je3gl.utilities.MaterialUtilities.*;
  * @version 1.0.0
  * @since 1.1.0
  */
-public class Player extends RigidBody2D {
+public final class Player extends RigidBody2D {
 
+    /**
+     * A mouse input handler: each time the player clicks the left mouse button,
+     * the player character jumps, provided that the cursor is near the
+     * character.
+     */
     public static final BooleanStateMouseInputHandler VM_JUMP = new BooleanStateMouseInputHandler(
             new MouseButton(MouseInput.BUTTON_LEFT, "MOUSE_JUMP")
     );
 
-    /**
-     * Main application.
-     */
+    /**  Main application. */
     private final TappyPlane app;
-
+    /** Game state. */
     private final GameSceneAppState sceneAppState;
 
+    /**
+     * A timer responsible for increasing the player's linear speed (thereby
+     * raising the difficulty) as well as the number of rocks and the level
+     * design.
+     */
     private final Timer timer;
 
+    /** Smoothed player rotation. */
     private final Vector1f angle;
-
+    /** Jump flag. */
     private boolean jump;
 
+    /** Rotation speed. */
     private final float speedRot = 8.0f;
+    /** Player animation speed. */
     private float speeedAnimation = 0.6f;
 
+    /**
+     * A linear speed that will increase over time: this is the effect of
+     * difficulty.
+     */
     private final Vector1f linearVelocity = new Vector1f(1.5f);
+ 
+    /**
+     * The speed at which the player moves through physical space.
+     */
     private final Vector1f currentLinearVelcity = new Vector1f(1.5f);
 
+    /** The shape id. */
     private b2ShapeId shapeId;
 
+    /**
+     * A flag that verifies the state of life of this body.
+     */
     private boolean isDead;
 
+    /**
+     * Constructor.
+     *
+     * @param app TappyPlane
+     */
     public Player(TappyPlane app) {
         this.sceneAppState = app.getStateManager().getState(GameSceneAppState.class);
         this.angle = new Vector1f();
@@ -88,18 +116,33 @@ public class Player extends RigidBody2D {
         this.app = app;
     }
 
+    /**
+     * (non-javadoc)
+     * 
+     * @param shapeDef b2ShapeDef
+     * @param shape b2Capsule
+     * @return b2ShapeId
+     */
     @Override
     public b2ShapeId addCapsuleShape(b2ShapeDef shapeDef, b2Capsule shape) {
         shapeId = super.addCapsuleShape(shapeDef, shape);
         return shapeId;
     }
 
+    /**
+     * Simple timer task
+     * 
+     * @see #timer
+     */
     private final TimerTask onTimerTask = (t) -> {
         linearVelocity.x += 0.5f;
         speeedAnimation += 0.025f;
         t.reset();
     };
 
+    /**
+     * Simple ready
+     */
     @Override
     protected void ready() {
         try (ArenaAlloc arena = allocPush()) {
@@ -110,6 +153,11 @@ public class Player extends RigidBody2D {
         timer.start();
     }
 
+    /**
+     * (non-Javadoc)
+     *
+     * @param enabled boolean
+     */
     @Override
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
@@ -122,6 +170,11 @@ public class Player extends RigidBody2D {
         }
     }
 
+    /**
+     * Simple update
+     *
+     * @param delta float
+     */
     @Override
     protected void physicsProcess(float delta) {
         timer.update(delta, 0.6f);
@@ -140,6 +193,11 @@ public class Player extends RigidBody2D {
         }
     }
 
+    /**
+     * Parallel update
+     *
+     * @param delta float
+     */
     @Override
     protected void physicsParallel(float delta) {
         currentLinearVelcity.interpolateLocal(linearVelocity, delta * 0.6f);
@@ -151,6 +209,10 @@ public class Player extends RigidBody2D {
             if (VM_JUMP.isActiveButNotHandled()) {
                 VM_JUMP.setHasBeenHandled(true);
 
+                /*
+                 * If the mouse cursor is positioned over the player, the player
+                 * will jump.
+                 */
                 Camera cam = app.getCamera();
                 InputManager inputManager = app.getInputManager();
                 CollisionResults results = new CollisionResults();
@@ -162,6 +224,7 @@ public class Player extends RigidBody2D {
                 Ray ray = new Ray(click3d, dir);
                 getJmeObject().getParent().collideWith(ray, results);
 
+                // check results
                 if (results.size() > 0) {
                     Geometry target = results.getClosestCollision().getGeometry();
                     if (Objects.equals(target, getJmeObject())) {
@@ -181,6 +244,9 @@ public class Player extends RigidBody2D {
         checkScores();
     }
 
+    /**
+     * Check whether we have hit an obstacle.
+     */
     private void checkContactEvents() {
         try (ArenaAlloc arena = allocPush()) {
             b2ContactEvents events = b2World_GetContactEvents(physicsSpace.getWorldId(), b2ContactEvents.calloc(arena));
@@ -202,6 +268,9 @@ public class Player extends RigidBody2D {
         }
     }
 
+    /**
+     * Check if we have collected a star to earn 10 points.
+     */
     private void checkScores() {
         try (ArenaAlloc arena = allocPush()) {
             b2SensorEvents sensorEvents = b2World_GetSensorEvents(physicsSpace.getWorldId(), b2SensorEvents.calloc(arena));
@@ -226,6 +295,9 @@ public class Player extends RigidBody2D {
         }
     }
 
+    /**
+     * Add a smoke particle that originates from the player.
+     */
     private void smoke() {
         Sprite sprite = (Sprite) ((Geometry) getJmeObject()).getMesh();
         Vector3f nPos = getPosition().add(-sprite.getWidth() / 2.0f, 0.0f, 0.0f);
@@ -233,6 +305,9 @@ public class Player extends RigidBody2D {
         spatial.getParent().attachChild(smoke.getSpatial());
     }
 
+    /**
+     * Free all the resources that this physical body uses.
+     */
     @Override
     public void queueFree() {
         timer.stop();
