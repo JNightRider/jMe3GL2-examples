@@ -4,6 +4,7 @@
  */
 package e.g.tappyplane.ui;
 
+import com.jme3.audio.AudioNode;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.util.functional.VoidFunction;
@@ -41,6 +42,9 @@ public final class TimerMessage extends Container {
     private VoidFunction<Void> callback;
     /** Timer index. */
     private int index;
+
+    /** Sound Score. */
+    private AudioNode sound;
 
     /**
      * Constructor.
@@ -91,6 +95,15 @@ public final class TimerMessage extends Container {
     }
 
     /**
+     * Establece el sound del contador.
+     *
+     * @param sound AudioNode
+     */
+    public void setSound(AudioNode sound) {
+        this.sound = sound;
+    }
+
+    /**
      * Sets a new event callback.
      *
      * @param callback VoidFunction
@@ -134,6 +147,9 @@ public final class TimerMessage extends Container {
      * Add the next object in the animation
      */
     private void addCurretNumber() {
+        if (sound != null) {
+            sound.playInstance();
+        }
         ControlLayout layout = (ControlLayout) getLayout();
         layout.addChild(numbers[index], ControlLayout.Alignment.CenterTop);
         layout.setAttribute(ControlLayout.POSITION, numbers[index], new Vector3f(0, 10, 0));

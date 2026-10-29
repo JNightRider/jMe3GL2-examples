@@ -5,6 +5,9 @@
 package e.g.tappyplane.screen;
 
 import com.jme3.app.Application;
+import com.jme3.asset.AssetManager;
+import com.jme3.audio.AudioKey;
+import com.jme3.audio.AudioNode;
 import com.jme3.collision.CollisionResults;
 import com.jme3.input.InputManager;
 import com.jme3.input.MouseInput;
@@ -54,6 +57,9 @@ public class MainSceneAppState extends AbstractScreen {
     /**  Root node for this state.  */
     private Node rootNode;
 
+    /** music node. */
+    private AudioNode music;
+
     /**  Player body. */
     private Player player;
 
@@ -75,7 +81,16 @@ public class MainSceneAppState extends AbstractScreen {
     protected void initialize(Application app) {
         super.initialize(app);
         TappyPlane application = (TappyPlane) app;
+        AssetManager assetManager = app.getAssetManager();
         inputManager = application.getInputManager();
+        //----------------------------------------------------------------------
+        //                              AUDIO
+        //----------------------------------------------------------------------
+        music = new AudioNode(assetManager.loadAudio("Sounds/main_music.wav"), new AudioKey("Music", true));
+        music.setPositional(false);
+        music.setDirectional(false);
+        music.setLooping(true);
+
         //----------------------------------------------------------------------
         //                              HUD
         //----------------------------------------------------------------------
@@ -166,6 +181,7 @@ public class MainSceneAppState extends AbstractScreen {
         tap.setTarget(player.getJmeObject());
         tap.setVisible(true);
         rootNode.attachChild(tap.getSpatial());
+        music.play();
     }
 
     /**
@@ -175,5 +191,6 @@ public class MainSceneAppState extends AbstractScreen {
     protected void onDisable() {
         super.onDisable();
         rootNode.detachAllChildren();
+        music.stop();
     }
 }

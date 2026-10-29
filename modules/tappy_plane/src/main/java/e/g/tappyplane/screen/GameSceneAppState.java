@@ -5,6 +5,9 @@
 package e.g.tappyplane.screen;
 
 import com.jme3.app.Application;
+import com.jme3.asset.AssetManager;
+import com.jme3.audio.AudioKey;
+import com.jme3.audio.AudioNode;
 import com.jme3.material.Material;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.queue.RenderQueue;
@@ -56,6 +59,14 @@ public final class GameSceneAppState extends AbstractScreen {
     /** A message "Game Over".*/
     private Geometry gameoverMessage;
 
+    /** Sound node; when the game is over. */
+    private AudioNode deathSound;
+    /** Sound Score. */
+    private AudioNode scoreSound;
+
+    /** music node. */
+    private AudioNode music;
+
     /**
      * When the player dies, there is a slight delay before leaving this scene
      * and moving to the main screen.
@@ -71,6 +82,7 @@ public final class GameSceneAppState extends AbstractScreen {
     protected void initialize(Application app) {
         super.initialize(app);
         TappyPlane application = (TappyPlane) app;
+        AssetManager assetManager = app.getAssetManager();
         //----------------------------------------------------------------------
         //                              HUD
         //----------------------------------------------------------------------
@@ -79,6 +91,30 @@ public final class GameSceneAppState extends AbstractScreen {
         timerMessage.setPreferredSize(rootContainer.getPreferredSize().clone());
         timerMessage.setCallback(startGame);
         layout.addChild(timerMessage, ControlLayout.Alignment.CenterTop);
+
+        //----------------------------------------------------------------------
+        //                              AUDIO
+        //----------------------------------------------------------------------
+        music = new AudioNode(assetManager.loadAudio("Sounds/play_music.wav"), new AudioKey("Music", true));
+        music.setPositional(false);
+        music.setDirectional(false);
+        music.setLooping(true);
+
+        deathSound = new AudioNode(assetManager.loadAudio("Sounds/sfx_lose.ogg"), new AudioKey("DeadthSound", false));
+        deathSound.setPositional(false);
+        deathSound.setDirectional(false);
+        deathSound.setLooping(false);
+        
+        scoreSound = new AudioNode(assetManager.loadAudio("Sounds/powerUp5.ogg"), new AudioKey("DeadthSound", false));
+        scoreSound.setPositional(false);
+        scoreSound.setDirectional(false);
+        scoreSound.setLooping(false);
+        
+        AudioNode timerSound = new AudioNode(assetManager.loadAudio("Sounds/card-place-1.ogg"), new AudioKey("DeadthSound", false));
+        timerSound.setPositional(false);
+        timerSound.setDirectional(false);
+        timerSound.setLooping(false);
+        timerMessage.setSound(timerSound);
 
         //----------------------------------------------------------------------
         //                              SCENE
@@ -138,6 +174,7 @@ public final class GameSceneAppState extends AbstractScreen {
     private final VoidFunction<Void> startGame = (t) -> {
         player.setEnabled(true);
         terrain.setEnabled(true);
+        music.play();
     };
 
     /**
@@ -177,6 +214,8 @@ public final class GameSceneAppState extends AbstractScreen {
         Spatial explosion = Effects.getNewInstaceExplosion((TappyPlane) getApplication(), changeListener);
         explosion.setLocalTranslation(position.x, position.y, 1f);
         rootNode.attachChild(explosion);
+        deathSound.playInstance();
+        music.stop();
     }
 
     /**
@@ -186,6 +225,9 @@ public final class GameSceneAppState extends AbstractScreen {
      */
     public void addScore(int value) {
         scores.addAmount(value);
+        getApplication().enqueue(() -> {
+            scoreSound.playInstance();
+        });
     }
 
     /**

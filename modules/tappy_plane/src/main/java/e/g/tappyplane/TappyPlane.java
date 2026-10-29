@@ -52,7 +52,7 @@ public class TappyPlane extends SimpleApplication {
         settings.setResolution(1024, 576);
 
         // Get the resolution of the user's current screen.
-        boolean isFullScreen = false;
+        boolean isFullScreen = true;
         Jme3GL2DisplaySystem displaySystem = Jme3GL2DefaultDisplaySystem.getDisplaySystem();
         JAWTResolution resolution = isFullScreen 
                 ? displaySystem.getFullScreenResolution()
