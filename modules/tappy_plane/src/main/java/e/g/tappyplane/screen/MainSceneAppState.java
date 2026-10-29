@@ -37,6 +37,7 @@ import org.je3gl.renderer.Camera2DAppSate;
 public class MainSceneAppState extends AbstractScreen {
     public static final BooleanStateMouseInputHandler START = new BooleanStateMouseInputHandler(new MouseButton(MouseInput.BUTTON_LEFT, "START"));
 
+    /** 2D camera manager. */
     private Camera2DAppSate camera2D;
     
     private InputManager inputManager;
