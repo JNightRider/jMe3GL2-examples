@@ -126,8 +126,9 @@ public class TappyPlane extends SimpleApplication {
     @Override
     public void destroy() {
         super.destroy();
-        GameData.getInstance()
-                .save();
+        GameData data = GameData.getInstance();
+        data.checkBestScore();
+        data.save();
     }
 
     /**
