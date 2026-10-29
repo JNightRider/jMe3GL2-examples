@@ -1,0 +1,212 @@
+/*
+ * This project is free for use and/or modification.
+ * Visit https://github.com/JNightRide/jMe3GL2-examples for more information
+ */
+package e.g.tappyplane.screen;
+
+import com.jme3.app.Application;
+import com.jme3.asset.AssetManager;
+import com.jme3.audio.AudioKey;
+import com.jme3.audio.AudioNode;
+import com.jme3.collision.CollisionResults;
+import com.jme3.input.InputManager;
+import com.jme3.input.MouseInput;
+import com.jme3.math.Ray;
+import com.jme3.math.Vector2f;
+import com.jme3.math.Vector3f;
+import com.jme3.renderer.Camera;
+import com.jme3.scene.Geometry;
+import com.jme3.scene.Node;
+
+import com.simsilica.lemur.Button;
+import com.simsilica.lemur.GuiGlobals;
+import com.simsilica.lemur.Label;
+import com.simsilica.lemur.component.QuadBackgroundComponent;
+
+import e.g.jme3hudl.ControlLayout;
+
+import e.g.tappyplane.TappyPlane;
+import e.g.tappyplane.game.Player;
+import e.g.tappyplane.game.Terrain;
+import e.g.tappyplane.game.anim.TapAnimation;
+
+import org.je3gl.plugins.input.BooleanStateMouseInputHandler;
+import org.je3gl.plugins.input.InputHandlerAppState;
+import org.je3gl.plugins.input.MouseButton;
+import org.je3gl.renderer.Camera2DAppSate;
+
+/**
+ * A state for the main scene.
+ *
+ * @author wil
+ * @version 1.0.0
+ * @since 1.1.0
+ */
+public class MainSceneAppState extends AbstractScreen {
+
+    /**
+     * Mouse input that initiates the game; this occurs if the player clicks the
+     * cursor on the player character.
+     */
+    public static final BooleanStateMouseInputHandler START = new BooleanStateMouseInputHandler(new MouseButton(MouseInput.BUTTON_LEFT, "START"));
+
+    /**  2D camera manager. */
+    private Camera2DAppSate camera2D;
+    /** Input manager. */
+    private InputManager inputManager;
+
+    /**  Root node for this state.  */
+    private Node rootNode;
+
+    /** music node. */
+    private AudioNode music;
+
+    /**  Player body. */
+    private Player player;
+
+    /** Playing terrain. */
+    private Terrain terrain;
+
+    /** Short animated guide. */
+    private TapAnimation tap;
+
+    /** Message "Get Ready" */
+    private Label message;
+
+    /**
+     * Initializes the screen properties.
+     *
+     * @param app
+     */
+    @Override
+    protected void initialize(Application app) {
+        super.initialize(app);
+        TappyPlane application = (TappyPlane) app;
+        AssetManager assetManager = app.getAssetManager();
+        inputManager = application.getInputManager();
+        //----------------------------------------------------------------------
+        //                              AUDIO
+        //----------------------------------------------------------------------
+        music = new AudioNode(assetManager.loadAudio("Sounds/main_music.wav"), new AudioKey("Music", true));
+        music.setVolume(0.4f);
+        music.setPositional(false);
+        music.setDirectional(false);
+        music.setLooping(true);
+
+        //----------------------------------------------------------------------
+        //                              HUD
+        //----------------------------------------------------------------------
+        ControlLayout layout = (ControlLayout) rootContainer.getLayout();
+
+        message = new Label("");
+        message.setPreferredSize(new Vector3f(913 * 0.6f, 166 * 0.6f, 0));
+        message.setBackground(new QuadBackgroundComponent(
+                GuiGlobals.getInstance()
+                        .loadTexture("Textures/ready.png", true, false)
+        ));
+        layout.addChild(message, ControlLayout.Alignment.CenterTop);
+        layout.setAttribute(ControlLayout.POSITION, message, new Vector3f(0, 90, 0));
+
+        // Exits Button
+        Button exitButton = new Button("");
+        exitButton.setPreferredSize(new Vector3f(260 * 0.25f, 271 * 0.25f, 0));
+        exitButton.setBackground(new QuadBackgroundComponent(
+                GuiGlobals.getInstance()
+                        .loadTexture("Textures/button.png", true, false)
+        ));
+        exitButton.addClickCommands((source) -> {
+            getApplication().stop();
+        });
+        layout.addChild(exitButton, ControlLayout.Alignment.RightTop);
+        layout.setAttribute(ControlLayout.POSITION, exitButton, new Vector3f(20, 10, 0));
+
+        //----------------------------------------------------------------------
+        //                              SCENE
+        //----------------------------------------------------------------------
+        rootNode = new Node("MyRootNode");
+        application.getRootNode().attachChild(rootNode);
+
+        tap = TapAnimation.getNewInstanceTapAnimation(application, 2.5f);
+        tap.getSpatial().move(-1, 0, 0);
+        tap.setVisible(false);
+
+        InputHandlerAppState handlerAppState = getState(InputHandlerAppState.class);
+        handlerAppState.addInputHandler(START).install();
+        camera2D = getState(Camera2DAppSate.class);
+    }
+
+    /**
+     * Simple update.
+     *
+     * @param tpf float
+     */
+    @Override
+    public void update(float tpf) {
+        if (START.isActiveButNotHandled()) {
+            START.setHasBeenHandled(true);
+
+            Camera cam = getApplication().getCamera();
+            CollisionResults results = new CollisionResults();
+
+            Vector2f click2d = inputManager.getCursorPosition();
+            Vector3f click3d = cam.getWorldCoordinates(new Vector2f(click2d.x, click2d.y), 0f).clone();
+            Vector3f dir = cam.getWorldCoordinates(new Vector2f(click2d.x, click2d.y), 1f).subtractLocal(click3d).normalizeLocal();
+
+            Ray ray = new Ray(click3d, dir);
+            rootNode.collideWith(ray, results);
+
+            if (results.size() > 0) {
+                Geometry target = results.getClosestCollision().getGeometry();
+                if (target != null && target.getControl(Player.class) != null) {
+
+                    GameSceneAppState game = getState(GameSceneAppState.class);
+                    game.setTerrain(terrain);
+                    game.setPlayer(player);
+
+                    setEnabled(false);
+                    game.setEnabled(true);
+                }
+            }
+        }
+    }
+
+    /**
+     * Start with the game screen
+     */
+    @Override
+    protected void onEnable() {
+        super.onEnable();
+        TappyPlane app = (TappyPlane) getApplication();
+
+        if (player != null) {
+            player.queueFree();
+        }
+        if (terrain != null) {
+            terrain.queueFree();
+        }
+
+        player = Player.getNewInstancePlayer(app, true);
+        player.setEnabled(false);
+        rootNode.attachChild(player.getJmeObject());
+        camera2D.setTarget(player.getJmeObject());
+
+        terrain = Terrain.getNewInstanceTerrain(app);
+        terrain.setEnabled(false);
+        rootNode.attachChild(terrain.getSpatial());
+
+        tap.setTarget(player.getJmeObject());
+        tap.setVisible(true);
+        rootNode.attachChild(tap.getSpatial());
+        music.play();
+    }
+
+    /**
+     * Destroy this screen.
+     */
+    @Override
+    protected void onDisable() {
+        super.onDisable();
+        rootNode.detachAllChildren();
+        music.stop();
+    }
+}

@@ -1,0 +1,7 @@
+description = 'jMe3GL2-examples Tappy Plane'
+group = 'e.g.tappyplane'
+version = '1.0.6'
+
+application {
+    mainClass = 'e.g.tappyplane.TappyPlane'
+}
