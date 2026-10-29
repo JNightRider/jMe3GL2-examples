@@ -14,6 +14,7 @@ import com.simsilica.lemur.component.QuadBackgroundComponent;
 
 import e.g.jme3hudl.ControlLayout;
 import e.g.tappyplane.GameData;
+
 import java.text.DecimalFormat;
 
 /**
