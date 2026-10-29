@@ -8,12 +8,9 @@ import com.jme3.app.Application;
 import com.jme3.app.state.BaseAppState;
 import com.jme3.math.Vector3f;
 import com.jme3.system.AppSettings;
-import com.simsilica.lemur.Button;
 
+import com.simsilica.lemur.Button;
 import com.simsilica.lemur.Container;
-import com.simsilica.lemur.GuiGlobals;
-import com.simsilica.lemur.Label;
-import com.simsilica.lemur.component.QuadBackgroundComponent;
 import com.simsilica.lemur.style.ElementId;
 
 import e.g.jme3hudl.ControlLayout;
@@ -36,7 +33,10 @@ public abstract class AbstractScreen extends BaseAppState {
     /** The background game. */
     protected Background background;
 
+    /** UI Score*/
     protected UIScore scores;
+    /** Rank icon */
+    private Button button;
     
     /**
      * (non-JavaDoc)
@@ -57,13 +57,10 @@ public abstract class AbstractScreen extends BaseAppState {
         rootContainer.setPreferredSize(new Vector3f(layout.getRootPane().getResolution().clone()));
         rootContainer.setLayout(layout);
         
-        Button button = new Button("");
+        button = new Button("");
         button.setPreferredSize(new Vector3f(260, 271, 0));
         button.scale(0.25f);
-        button.setBackground(new QuadBackgroundComponent(
-                GuiGlobals.getInstance()
-                        .loadTexture("Textures/score_01.png", true, false)
-        ));
+        button.setBackground(UIScore.getScoreIcon());
         layout.addChild(button, ControlLayout.Alignment.LeftTop);
         layout.setAttribute(ControlLayout.POSITION, button, new Vector3f(10, 10, 0));
         
@@ -98,6 +95,8 @@ public abstract class AbstractScreen extends BaseAppState {
         rootContainer.setPreferredSize(new Vector3f(settings.getWidth(), settings.getHeight(), 0));
         rootContainer.setLocalTranslation(0, settings.getHeight(), 0);
         scores.updateScores();
+        scores.resetScores();
+        button.setBackground(UIScore.getScoreIcon());
     }
 
     /**
