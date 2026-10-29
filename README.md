@@ -5,6 +5,7 @@ This is a repository hosting examples of 2D games that use the [jMe3GL2](https:/
 Some examples
 
 - [dodge_the_creeps](./modules/dodge_the_creeps)
+- [tappy_plane](./modules/tappy_plane)
 
 ## Getting started tutorial
 
@@ -14,7 +15,7 @@ You can start with this first tutorial where you can create your first 2D game b
 
 [Go to tutorial](https://github.com/JNightRide/jMe3GL2-examples/wiki)
 
-With this you will have an idea of ​​how to start with **JME3** and **jMe3GL2**, 2D games with this engine have no limits; It all depends on your imagination.
+With this you will have an idea of how to start with **JME3** and **jMe3GL2**, 2D games with this engine have no limits; It all depends on your imagination.
 
 ## Physics engine
 
