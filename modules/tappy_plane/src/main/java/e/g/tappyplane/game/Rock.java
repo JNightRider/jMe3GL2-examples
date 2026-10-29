@@ -10,6 +10,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
+import com.jme3.scene.Node;
 
 import e.g.tappyplane.TappyPlane;
 import e.g.tappyplane.game.enums.RockType;
@@ -43,14 +44,23 @@ public final class Rock extends KinematicBody2D {
 
     /** The world's camera.  */
     private final Camera camera;
+    /** Orientation */
+    private final boolean isDown;
+
+    /**
+     * A flag that verifies the state of life of this body.
+     */
+    private boolean isDead;
 
     /**
      * Constructor.
      *
      * @param camera Camera
+     * @param isDown boolean
      */
-    public Rock(Camera camera) {
+    public Rock(Camera camera, boolean isDown) {
         this.camera = camera;
+        this.isDown = isDown;
     }
 
     /**
@@ -75,6 +85,7 @@ public final class Rock extends KinematicBody2D {
     @Override
     public void queueFree() {
         if (spatial.removeFromParent()) {
+            isDead = true;
             physicsSpace.enqueue(() -> {
                 physicsSpace.removeBody(this);
             });
@@ -89,7 +100,25 @@ public final class Rock extends KinematicBody2D {
     public Sprite getSprite() {
         return (Sprite) ((Geometry) spatial).getMesh();
     }
-    
+
+    /**
+     * Returns the orientation.
+     *
+     * @return boolean
+     */
+    public boolean isDown() {
+        return isDown;
+    }
+
+    /**
+     * Returns the life indicator,
+     *
+     * @return boolean
+     */
+    public boolean isDead() {
+        return isDead;
+    }
+
     /**
      * Returns a new instance of the rock.
      *
@@ -115,7 +144,7 @@ public final class Rock extends KinematicBody2D {
         geom.setMaterial(mat);
         geom.setQueueBucket(RenderQueue.Bucket.Transparent);
 
-        Rock rock = new Rock(app.getCamera());
+        Rock rock = new Rock(app.getCamera(), isDown);
         rock.setType(b2_staticBody);
         physicsSpace.addBody(rock);
 
@@ -143,5 +172,27 @@ public final class Rock extends KinematicBody2D {
 
         geom.addControl(rock);
         return rock;
+    }
+
+    /**
+     * Compute the number of stars that must be added to a rock.
+     *
+     * @param app TappyPlane
+     * @param rock Rock
+     * @param rootNode Node
+     * @param amount int
+     * @param isDown boolean
+     */
+    public static void computeStars(
+            TappyPlane app,
+            Rock rock,
+            Node rootNode,
+            int amount,
+            boolean isDown
+    ) {
+        for (int i = 0; i < amount; i++) {
+            Star star = Star.getNewInstancePlayer(app, rock, i);
+            rootNode.attachChild(star.getJmeObject());
+        }
     }
 }

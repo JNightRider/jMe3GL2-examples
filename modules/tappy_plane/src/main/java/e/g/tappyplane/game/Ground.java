@@ -235,17 +235,30 @@ public final class Ground extends KinematicBody2D {
         float xInit = -maxWidth / 2.0f,
               yInit = isDown ? myGround.getApp().getCamera().getFrustumTop() : myGround.getPosition().y;
 
+        int mod = 0;
         int[] cache = new int[myGround.getRockCount()];
         for (int i = 0; i < myGround.getRockCount(); i++) {
             Rock rock = Rock.getNewInstanceRock(myGround.getApp(), myGround.getType().getRockType(), isDown);
             Sprite sprite = rock.getSprite();
 
+            /* 
+             * A closed system for distributing rocks, where an even number
+             * corresponds to a rock on the roof, and otherwise, on the floor.
+             */
+            mod += i % 2 == 0 ? 1 : 0;
+
+            // Rock offset ('y')
             float offsetY = yInit;
             if (isDown) {
                 offsetY -= sprite.getHeight() / 2.0f - 1;
             }
             offsetY += random.nextFloat(-0.2f, 1.15f);
-            
+
+            /*
+             * If it is the initial stone, it is added at the end; otherwise, it
+             * is placed at the end (always at position 0, which, in practice,
+             * shifts the existing elements forward).
+             */
             if (!isDown && i == 0) {
                 rock.setPosition(new Vector2f(xInit, offsetY));
                 rootNode.attachChild(rock.getJmeObject());
@@ -254,10 +267,27 @@ public final class Ground extends KinematicBody2D {
                 cache[i] = idx;
                 rock.setPosition(new Vector2f(xInit + (sprite.getWidth() * idx), offsetY + random.nextFloat(-0.15f, 1.0f)));
                 rootNode.attachChildAt(rock.getJmeObject(), 0);
+
+            }
+
+            /*
+             * A small amount of entropy for each appearance of stars.
+             * 
+             * NOTE: The bedrock must already exist before the calculations are
+             *       performed.
+             */
+            if (isDown) {
+                if (mod % 2 == 0 && random.nextInt(0, 100) % 2 == 0) {
+                    Rock.computeStars(myGround.getApp(), rock, rootNode, random.nextInt(1, 3), isDown);
+                }
+            } else {
+                if (mod % 2 != 0 && random.nextInt(0, 200) % 2 == 0) {
+                    Rock.computeStars(myGround.getApp(), rock, rootNode, random.nextInt(1, 3), isDown);
+                }
             }
         }
     }
-
+ 
     /**
      * Find the next position randomly.
      *
