@@ -17,15 +17,62 @@ import e.g.tappyplane.GameData;
 import java.text.DecimalFormat;
 
 /**
+ * Score container.
  *
  * @author wil
+ * @version 1.0.0
+ * @since 1.1.0
  */
 public final class UIScore extends Container {
 
+    /** Score required to reach Bronze. */
+    public static final long BRONZE_SCORE = 0;
+    /** Bronze rank icon.  */
+    public static final QuadBackgroundComponent BRONZE = new QuadBackgroundComponent(
+            GuiGlobals.getInstance()
+                    .loadTexture("Textures/score_01.png", true, false)
+    );
+
+    /** Score required to reach Silver. */
+    public static final long SILVER_SCORE = 5000;
+    /** Silver rank icon.  */
+    public static final QuadBackgroundComponent SILVER = new QuadBackgroundComponent(
+            GuiGlobals.getInstance()
+                    .loadTexture("Textures/score_02.png", true, false)
+    );
+
+    /** Score required to reach Gold. */
+    public static final long GOLD_SCORE = 1000;
+    /** Gold rank icon.  */
+    public static final QuadBackgroundComponent GOLD = new QuadBackgroundComponent(
+            GuiGlobals.getInstance()
+                    .loadTexture("Textures/score_03.png", true, false)
+    );
+
+    /**
+     * Returns the icon corresponding to the rank.
+     *
+     * @return QuadBackgroundComponent
+     */
+    public static QuadBackgroundComponent getScoreIcon() {
+        GameData data = GameData.getInstance();
+        long score = data.bestScore;
+        if (score >= GOLD_SCORE) {
+            return GOLD.clone();
+        }
+        if (score >= SILVER_SCORE && score < GOLD_SCORE) {
+            return SILVER.clone();
+        }
+        return BRONZE.clone();
+    }
+
+    /** laberl current score */
     private Label currentScore;
+    /** label last socore.*/
     private Label lastScore;
 
-    private GameData dataGame = GameData.getInstance();
+    /** the game data. */
+    private final GameData dataGame = GameData.getInstance();
 
     /**
      * Constructor.
@@ -37,6 +84,9 @@ public final class UIScore extends Container {
         this.initComponents();
     }
 
+    /**
+     * Simple init
+     */
     private void initComponents() {
         ControlLayout layout = (ControlLayout) getLayout();
         setPreferredSize(new Vector3f(200, 50, 10));
@@ -51,7 +101,7 @@ public final class UIScore extends Container {
 
         }
 
-        currentScore = new Label("Score: 0");
+        currentScore = new Label("Score: " + amountToString(dataGame.lastScore, 9));
         currentScore.setPreferredSize(new Vector3f(180, 20, 1));
         currentScore.setTextVAlignment(VAlignment.Center);
         currentScore.setColor(ColorRGBA.White);
@@ -64,7 +114,7 @@ public final class UIScore extends Container {
         layout.setAttribute(ControlLayout.POSITION, currentScore, new Vector3f(10, 5, 1));
         layout.setAttribute(ControlLayout.FONT_SIZE, currentScore, 15.0f);
 
-        lastScore = new Label("Latest score: 0");
+        lastScore = new Label("Latest score: " + amountToString(dataGame.bestScore, 19));
         lastScore.setPreferredSize(new Vector3f(180, 20, 1));
         lastScore.setTextVAlignment(VAlignment.Center);
         lastScore.setColor(ColorRGBA.White);
@@ -78,22 +128,40 @@ public final class UIScore extends Container {
         layout.setAttribute(ControlLayout.FONT_SIZE, lastScore, 10.0f);
     }
 
+    /**
+     * Add up the points earned in the game
+     *
+     * @param value long
+     */
     public void addAmount(long value) {
         dataGame.lastScore += value;
-        currentScore.setText("Score: " + amountToString(dataGame.lastScore , 9));
+        currentScore.setText("Score: " + amountToString(dataGame.lastScore, 9));
     }
 
+    /**
+     * Update data
+     */
     public void updateScores() {
         dataGame.checkBestScore();
         dataGame.save();
         lastScore.setText("Latest score: " + amountToString(dataGame.bestScore, 19));
     }
 
-    public void resetScores() {        
+    /**
+     * Reset scores
+     */
+    public void resetScores() {
         dataGame.lastScore = 0;
         currentScore.setText("Score: 0");
     }
-    
+
+    /**
+     * Pass a very big value using "kilo" notation.
+     *
+     * @param number long
+     * @param maxlen int
+     * @return String
+     */
     private static String amountToString(long number, int maxlen) {
         if (number < 1000) {
             return String.valueOf(number);
