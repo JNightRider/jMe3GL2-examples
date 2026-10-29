@@ -148,6 +148,10 @@ public class GameSceneAppState extends AbstractScreen {
         rootNode.attachChild(explosion);
     }
 
+    public void addScore(int score) {
+        
+    }
+    
     /**
      * Start with the game screen
      */

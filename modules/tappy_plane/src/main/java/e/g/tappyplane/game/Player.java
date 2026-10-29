@@ -7,7 +7,6 @@ package e.g.tappyplane.game;
 import com.jme3.asset.AssetManager;
 import com.jme3.collision.CollisionResults;
 import com.jme3.input.InputManager;
-import com.jme3.input.KeyInput;
 import com.jme3.input.MouseInput;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState;
@@ -18,19 +17,18 @@ import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
+
 import e.g.tappyplane.TappyPlane;
-import e.g.tappyplane.game.anim.TapAnimation;
 import e.g.tappyplane.math.Vector1f;
 import e.g.tappyplane.screen.GameSceneAppState;
+
 import java.util.Objects;
 
 import org.box2d.jni.*;
 import org.box2d.jni.system.*;
 
 import static org.box2d.jni.b2BodyType.*;
-
 import static org.box2d.jni.include.Box2d.*;
-import static org.box2d.jni.include.Collision.*;
 import static org.box2d.jni.include.Id.*;
 import static org.box2d.jni.include.MathFunctions.*;
 import static org.box2d.jni.include.Types.*;
@@ -39,9 +37,7 @@ import static org.box2d.jni.system.ArenaAlloc.*;
 import org.je3gl.box2d.Box2dAppState;
 import org.je3gl.box2d.PhysicsSpace;
 import org.je3gl.box2d.control.RigidBody2D;
-import org.je3gl.plugins.input.BooleanStateKeyboardInputHandler;
 import org.je3gl.plugins.input.BooleanStateMouseInputHandler;
-import org.je3gl.plugins.input.Key;
 import org.je3gl.plugins.input.MouseButton;
 import org.je3gl.scene.control.AnimatedSingleSprite2D;
 import org.je3gl.scene.shape.Sprite;
@@ -62,8 +58,12 @@ public class Player extends RigidBody2D {
             new MouseButton(MouseInput.BUTTON_LEFT, "MOUSE_JUMP")
     );
 
-    /**  Main application. */
+    /**
+     * Main application.
+     */
     private final TappyPlane app;
+
+    private final GameSceneAppState sceneAppState;
 
     private final Timer timer;
 
@@ -79,7 +79,10 @@ public class Player extends RigidBody2D {
 
     private b2ShapeId shapeId;
 
+    private boolean isDead;
+
     public Player(TappyPlane app) {
+        this.sceneAppState = app.getStateManager().getState(GameSceneAppState.class);
         this.angle = new Vector1f();
         this.timer = new Timer(2.5f);
         this.app = app;
@@ -111,7 +114,7 @@ public class Player extends RigidBody2D {
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
         spatial.getControl(AnimatedSingleSprite2D.class)
-               .setEnabled(enabled);
+                .setEnabled(enabled);
         if (enabled) {
             b2Body_Enable(bodyId);
         } else {
@@ -127,12 +130,12 @@ public class Player extends RigidBody2D {
             jump = false;
             smoke();
         }
-        spatial.getControl(AnimatedSingleSprite2D.class).setAnimationSpeed(speeedAnimation);
-        checkContactEvents();
-        
+        spatial.getControl(AnimatedSingleSprite2D.class)
+                .setAnimationSpeed(speeedAnimation);
+
         float limitY = app.getCamera().getFrustumTop();
         float myPosY = getPosition().y;
-        if (myPosY > limitY) {
+        if (myPosY > limitY || isDead) {
             queueFree();
         }
     }
@@ -174,6 +177,8 @@ public class Player extends RigidBody2D {
             b2MakeRot(angle.x, transform.q());
             b2Body_SetTransform(bodyId, transform.p(), transform.q());
         }
+        checkContactEvents();
+        checkScores();
     }
 
     private void checkContactEvents() {
@@ -182,7 +187,7 @@ public class Player extends RigidBody2D {
             if (events.beginEvents() == NULL) {
                 return;
             }
-            
+
             b2ContactBeginTouchEvent.Buffer pointer = new b2ContactBeginTouchEvent.Buffer(events.beginEvents(), events.beginCount());
             for (int i = 0; i < events.beginCount(); ++i) {
                 b2ContactBeginTouchEvent event = pointer.get(i);
@@ -191,7 +196,27 @@ public class Player extends RigidBody2D {
                 b2ShapeId bodyB = event.shapeIdB();
 
                 if (B2_ID_EQUALS(bodyA, shapeId) || B2_ID_EQUALS(bodyB, shapeId)) {
-                    queueFree();
+                    isDead = true;
+                }
+            }
+        }
+    }
+
+    private void checkScores() {
+        try (ArenaAlloc arena = allocPush()) {
+            b2SensorEvents sensorEvents = b2World_GetSensorEvents(physicsSpace.getWorldId(), b2SensorEvents.calloc(arena));
+            long nBeginEvents = sensorEvents.beginEvents();
+            if (nBeginEvents == NULL) {
+                return;
+            }
+
+            b2SensorBeginTouchEvent.Buffer ptr = new b2SensorBeginTouchEvent.Buffer(nBeginEvents, sensorEvents.beginCount());
+            for (int i = 0; i < sensorEvents.beginCount(); i++) {
+                b2SensorBeginTouchEvent event = ptr.get(i);
+
+                long userData = b2Shape_GetUserData(event.sensorShapeId());
+                if (userData == Star.ID_STAR && B2_ID_EQUALS(shapeId, event.visitorShapeId())) {
+                    sceneAppState.addScore(10);
                 }
             }
         }
@@ -211,9 +236,7 @@ public class Player extends RigidBody2D {
             physicsSpace.enqueue(() -> {
                 physicsSpace.removeBody(this);
             });
-            app.getStateManager()
-               .getState(GameSceneAppState.class)
-               .gameOver(getPosition());
+            sceneAppState.gameOver(getPosition());
         }
     }
 
@@ -259,6 +282,7 @@ public class Player extends RigidBody2D {
                 b2ShapeDef shapeDef = b2DefaultShapeDef(b2ShapeDef.calloc(arena));
                 shapeDef.density(1.0f);
                 shapeDef.material().friction(0.3f);
+                shapeDef.enableSensorEvents(true);
 
                 b2Capsule capsule = b2Capsule.calloc(arena);
                 capsule.center1().set(-0.25f, 0f);

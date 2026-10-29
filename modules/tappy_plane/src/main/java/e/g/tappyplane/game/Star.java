@@ -13,6 +13,12 @@ import com.jme3.scene.Geometry;
 
 import e.g.tappyplane.TappyPlane;
 
+import org.box2d.jni.b2Circle;
+import org.box2d.jni.b2ShapeDef;
+import org.box2d.jni.system.ArenaAlloc;
+import static org.box2d.jni.include.Types.*;
+import static org.box2d.jni.system.ArenaAlloc.*;
+
 import org.je3gl.box2d.Box2dAppState;
 import org.je3gl.box2d.PhysicsSpace;
 import org.je3gl.box2d.control.KinematicBody2D;
@@ -27,6 +33,8 @@ import static org.je3gl.utilities.MaterialUtilities.*;
  * @since 1.1.0
  */
 public final class Star extends KinematicBody2D {
+    /** An identifier for a star. */
+    public static final long ID_STAR = 0x0001l;
 
     /** Position. */
     private final Vector2f location = new Vector2f();
@@ -126,6 +134,18 @@ public final class Star extends KinematicBody2D {
 
         Star star = new Star(rock, index);
         physicsSpace.addBody(star);
+
+        try (ArenaAlloc arena = allocPush()) {
+            b2ShapeDef shapeDef = b2DefaultShapeDef(b2ShapeDef.calloc(arena));
+            shapeDef.isSensor(true);
+            shapeDef.enableSensorEvents(true);
+            shapeDef.userData(ID_STAR);
+
+            b2Circle circle = b2Circle.calloc(arena);
+            circle.radius(0.4f);
+            star.addCircleShape(shapeDef, circle);
+        }
+
         geom.addControl(star);
         return star;
     }
