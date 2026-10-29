@@ -15,6 +15,7 @@ import e.g.tappyplane.TappyPlane;
 
 import org.box2d.jni.b2Circle;
 import org.box2d.jni.b2ShapeDef;
+import org.box2d.jni.include.Box2d;
 import org.box2d.jni.system.ArenaAlloc;
 import static org.box2d.jni.include.Types.*;
 import static org.box2d.jni.system.ArenaAlloc.*;
@@ -34,7 +35,9 @@ import static org.je3gl.utilities.MaterialUtilities.*;
  */
 public final class Star extends KinematicBody2D {
     /** An identifier for a star. */
-    public static final long ID_STAR = 0x0001l;
+    public static final long
+            ID_STAR      = 0x0001l,
+            ID_STAR_DEAD = 0x0002l;;
 
     /** Position. */
     private final Vector2f location = new Vector2f();
@@ -45,6 +48,11 @@ public final class Star extends KinematicBody2D {
      * Position or index that this star occupies on the rock.
      */
     private final int index;
+
+    /**
+     * A flag that verifies the state of life of this body.
+     */
+    private boolean isDead;
 
     /**
      * Constructor.
@@ -64,17 +72,14 @@ public final class Star extends KinematicBody2D {
      */
     @Override
     protected void physicsParallel(float delta) {
-        if (rock.isDead()) {
+        if (rock.isDead() || isDead) {
             queueFree();
             return;
         }
 
         Vector3f rockPosition = rock.getPosition();
-
-        // Radius of the circle
         float radius = 4;
         float rotation = rock.isDown() ? 270 : 90;
-
         float angleStep = 360f / 12f;
 
         // Angle of this object
@@ -85,6 +90,11 @@ public final class Star extends KinematicBody2D {
         location.x = rockPosition.x + radius * (float) Math.cos(radians);
         location.y = rockPosition.y + radius * (float) Math.sin(radians);
         setPosition(location);
+
+        long userData = Box2d.b2Body_GetUserData(bodyId);
+        if (userData == ID_STAR_DEAD) {
+            isDead = true;
+        }
     }
 
     /**

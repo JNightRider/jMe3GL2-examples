@@ -88,7 +88,7 @@ public class TappyPlane extends SimpleApplication {
 
         // The physical state is initialized.
         Box2dAppState box2dAppState = new Box2dAppState(ThreadingType.PARALLEL);
-        box2dAppState.setDebugEnabled(true);
+        box2dAppState.setDebugEnabled(false);
         stateManager.attach(box2dAppState);
 
         // Set the camera to 2D, with a distance of 5 units.
@@ -118,6 +118,16 @@ public class TappyPlane extends SimpleApplication {
 
         // set the background color. [0.835f, 0.929f, 0.969f, 1.0f]
         viewPort.setBackgroundColor(new ColorRGBA(1.0f, 1.0f, 1.0f, 1.0f));
+    }
+
+    /**
+     * Simple destroy
+     */
+    @Override
+    public void destroy() {
+        super.destroy();
+        GameData.getInstance()
+                .save();
     }
 
     /**

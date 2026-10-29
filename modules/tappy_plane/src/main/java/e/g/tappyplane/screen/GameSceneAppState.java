@@ -148,8 +148,8 @@ public class GameSceneAppState extends AbstractScreen {
         rootNode.attachChild(explosion);
     }
 
-    public void addScore(int score) {
-        
+    public void addScore(int value) {
+        scores.addAmount(value);
     }
     
     /**
@@ -161,6 +161,7 @@ public class GameSceneAppState extends AbstractScreen {
         rootNode.attachChild(player.getJmeObject());
         rootNode.attachChild(terrain.getSpatial());
         timerMessage.start();
+        scores.resetScores();
     }
 
     @Override

@@ -74,7 +74,7 @@ public class MainSceneAppState extends AbstractScreen {
                 GuiGlobals.getInstance().loadTexture("Textures/ready.png", true, false)
         ));
         layout.addChild(message, ControlLayout.Alignment.CenterTop);
-        layout.setAttribute(ControlLayout.POSITION, message, new Vector3f(0, 80, 0));
+        layout.setAttribute(ControlLayout.POSITION, message, new Vector3f(0, 90, 0));
   
         //----------------------------------------------------------------------
         //                              SCENE

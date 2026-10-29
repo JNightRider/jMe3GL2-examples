@@ -44,6 +44,7 @@ import org.je3gl.scene.shape.Sprite;
 import org.je3gl.util.Timer;
 import org.je3gl.util.TimerTask;
 import static org.je3gl.utilities.MaterialUtilities.*;
+import org.lwjgl.system.libc.LibCErrno;
 
 /**
  * Class <code>Player</code> that manages the player character.
@@ -216,6 +217,10 @@ public class Player extends RigidBody2D {
 
                 long userData = b2Shape_GetUserData(event.sensorShapeId());
                 if (userData == Star.ID_STAR && B2_ID_EQUALS(shapeId, event.visitorShapeId())) {
+                    b2BodyId startBodyId = b2Shape_GetBody(event.sensorShapeId(), b2BodyId.calloc(arena));
+                    if (b2Body_IsValid(startBodyId)) {
+                        b2Body_SetUserData(startBodyId, Star.ID_STAR_DEAD);
+                    }
                     sceneAppState.addScore(10);
                 }
             }
