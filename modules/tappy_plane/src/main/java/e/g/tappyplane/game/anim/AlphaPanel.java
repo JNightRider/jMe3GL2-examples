@@ -38,7 +38,6 @@ public final class AlphaPanel extends AbstractTween {
      * @param from Vector2f
      * @param to Vector2f
      * @param scale float
-     * @param length double
      */
     public AlphaPanel(Panel target, Vector2f from, Vector2f to, float scale) {
         this(target, from, to, scale, to.distance(from));
