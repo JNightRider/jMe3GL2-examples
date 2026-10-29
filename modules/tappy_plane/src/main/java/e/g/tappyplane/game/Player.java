@@ -44,7 +44,6 @@ import org.je3gl.scene.shape.Sprite;
 import org.je3gl.util.Timer;
 import org.je3gl.util.TimerTask;
 import static org.je3gl.utilities.MaterialUtilities.*;
-import org.lwjgl.system.libc.LibCErrno;
 
 /**
  * Class <code>Player</code> that manages the player character.
