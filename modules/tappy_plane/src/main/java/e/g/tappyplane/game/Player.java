@@ -231,7 +231,7 @@ public final class Player extends RigidBody2D {
                         jump = true;
                         angle.x = FastMath.PI / 4.0f;
                         float mass = b2Body_GetMass(bodyId);
-                        b2Body_ApplyForceToCenter(bodyId, b2Vec2.calloc(arena).set(0.0f, 750.0f * mass), true);
+                        b2Body_ApplyForceToCenter(bodyId, b2Vec2.calloc(arena).set(0.0f, 500.0f * mass), true);
                     }
                 }
             }

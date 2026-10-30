@@ -51,6 +51,10 @@ public class TappyPlane extends SimpleApplication {
         // set "Width" to 1024 and "Height" to 576.
         settings.setResolution(1024, 576);
 
+        // We limit the frequency rate
+        settings.setFrequency(60);
+        settings.setFrameRate(60);
+
         // Get the resolution of the user's current screen.
         boolean isFullScreen = false;
         Jme3GL2DisplaySystem displaySystem = Jme3GL2DefaultDisplaySystem.getDisplaySystem();
