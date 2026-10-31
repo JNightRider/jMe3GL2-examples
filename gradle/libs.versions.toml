@@ -4,21 +4,16 @@
 
 particlemonkeyVersion = "1.1.0"
 jmonkeyengineVersion  = "3.9.0-stable"
-dyn4jVersion          = "6.0.0"
 lemurVersion          = "1.16.0"
 lemurprotoVersion     = "1.13.0"
 groovyVersion         = "3.0.10"
 log4jVersion          = "2.22.0"
-jme3gl2Version        = "3.2.1"
-box2djniVersion       = "2.1.0"
+jme3gl2Version        = "3.2.2"
 nuclearVersion        = "1.0.1"
 lwjgl3                = "3.4.3"
 lwjglNatives          = "<?>"
 
 [libraries]
-
-box2d-jni            = { module = "io.github.jnightrider:box2d-jni",                version.ref = "box2djniVersion" }
-dyn4j                = { module = "org.dyn4j:dyn4j",                                version.ref = "dyn4jVersion"    }
 
 lemur                = { module = "com.simsilica:lemur",                            version.ref = "lemurVersion"          }
 lemur-proto          = { module = "com.simsilica:lemur-proto",                      version.ref = "lemurprotoVersion"     }

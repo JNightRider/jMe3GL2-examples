@@ -65,43 +65,6 @@ subprojects {
         implementation(libs.jme3gl2.dyn4j)
         implementation(libs.jme3gl2.box2d)
         implementation(libs.jme3gl2.plugins)
-        implementation(libs.dyn4j)
-
-        //===----------------------------------------------------------------===
-        //                            Box2d-JNI
-        //===----------------------------------------------------------------===
-        implementation(libs.box2d.jni)
-
-        runtimeOnly(variantOf(libs.box2d.jni){ classifier('linux_aarch64Dp') })
-        runtimeOnly(variantOf(libs.box2d.jni){ classifier('linux_aarch64Sp') })
-        runtimeOnly(variantOf(libs.box2d.jni){ classifier('linux_x64Dp') })
-        runtimeOnly(variantOf(libs.box2d.jni){ classifier('linux_x64Sp') })
-
-        runtimeOnly(variantOf(libs.box2d.jni){ classifier('windows_aarch64Dp') })
-        runtimeOnly(variantOf(libs.box2d.jni){ classifier('windows_aarch64Sp') })
-        runtimeOnly(variantOf(libs.box2d.jni){ classifier('windows_x64Dp') })
-        runtimeOnly(variantOf(libs.box2d.jni){ classifier('windows_x64Sp') })
-
-        runtimeOnly(variantOf(libs.box2d.jni){ classifier('osx_aarch64Dp') })
-        runtimeOnly(variantOf(libs.box2d.jni){ classifier('osx_aarch64Sp') })
-        runtimeOnly(variantOf(libs.box2d.jni){ classifier('osx_x64Dp') })
-        runtimeOnly(variantOf(libs.box2d.jni){ classifier('osx_x64Sp') })
-
-        runtimeOnly(libs.box2d.jni) {
-            artifact {
-                classifier = 'android_Sp'
-                extension  = 'aar'
-                type = 'aar'
-
-            }
-        }
-        runtimeOnly(libs.box2d.jni) {
-            artifact {
-                classifier = 'android_Dp'
-                extension  = 'aar'
-                type = 'aar'
-            }
-        }
 
         //===----------------------------------------------------------------===
         //                          Other
